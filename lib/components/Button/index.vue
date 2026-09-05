@@ -6,10 +6,12 @@
   const {
     text = undefined,
     href = undefined,
+    to = undefined,
     target = undefined,
   } = defineProps<{
     text?: string
     href?: string
+    to?: string | object
     target?: string
   }>()
 
@@ -18,9 +20,10 @@
 
 <template>
   <component
-    :is="href ? 'a' : 'button'"
-    :class="family === 'mac' && !href ? 'btn' : undefined"
+    :is="to ? 'router-link' : href ? 'a' : 'button'"
+    :class="family === 'mac' && !href && !to ? 'btn' : undefined"
     :href
+    :to
     :target
   >
     <slot name="prepend" />

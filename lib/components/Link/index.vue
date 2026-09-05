@@ -20,8 +20,9 @@
 
 <template>
   <component
-    :is="href || to ? 'a' : 'button'"
+    :is="to ? 'router-link' : href ? 'a' : 'button'"
     :href
+    :to
     :target
   >
     <WinIcon

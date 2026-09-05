@@ -1,6 +1,6 @@
 {
   "name": "win7-vue",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "main": "dist/win7-vue.js",
   "devDependencies": {
     "7.css": "^0.17.0",
@@ -38,6 +38,10 @@
     "dist"
   ],
   "homepage": "https://github.com/vstyler96/win7-vue",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vstyler96/win7-vue.git"
+  },
   "keywords": [
     "windows7",
     "windowsxp",
@@ -72,6 +76,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vue-tsc -b ./tsconfig.lib.json && vite build",
+    "prepublishOnly": "npm run build",
     "build:demo": "vite build --config vite.config.demo.ts",
     "preview": "vite preview",
     "preview:demo": "vite preview --outDir demo",
