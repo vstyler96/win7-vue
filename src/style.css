@@ -1,0 +1,15 @@
+/*
+ * Demo-local styles. No global box-sizing reset: the upstream frameworks size
+ * their chrome for content-box (e.g. XP.css .title-bar { height: 21px } plus
+ * padding); a universal border-box reset collapses those metrics.
+ */
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  background: linear-gradient(180deg, #245dab 0%, #3f8bc9 100%);
+}
+
+#app {
+  width: 100%;
+}

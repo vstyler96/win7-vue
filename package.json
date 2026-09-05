@@ -1,0 +1,82 @@
+{
+  "name": "win7-vue",
+  "version": "1.0.0",
+  "main": "dist/win7-vue.js",
+  "devDependencies": {
+    "7.css": "^0.17.0",
+    "98.css": "^0.1.20",
+    "@nabla/vite-plugin-eslint": "^2.0.6",
+    "@sakun/system.css": "^0.1.11",
+    "@types/node": "^24.10.9",
+    "@vitejs/plugin-vue": "^6.0.3",
+    "@vue/tsconfig": "^0.7.0",
+    "highlight.js": "^11.11.1",
+    "typescript": "~5.8.3",
+    "vite": "^7.3.1",
+    "vite-plugin-dts": "^4.5.4",
+    "vue": "^3.5.27",
+    "vue-eslint-parser": "^10.2.0",
+    "vue-tsc": "^3.2.4",
+    "xp.css": "^0.2.6"
+  },
+  "peerDependencies": {
+    "7.css": "^0.17.0",
+    "98.css": ">=0.1.0",
+    "@sakun/system.css": ">=0.1.0",
+    "vue": "^3.5.18",
+    "xp.css": ">=0.2.0"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/main.d.ts",
+      "import": "./dist/win7-vue.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "description": "Agnostic Vue 3 component library for classic Windows UI — real 98.css / XP.css / 7.css markup, zero shipped CSS, runtime theme switching",
+  "files": [
+    "dist"
+  ],
+  "homepage": "https://github.com/vstyler96/win7-vue",
+  "keywords": [
+    "windows7",
+    "windowsxp",
+    "windows98",
+    "vue",
+    "vuejs",
+    "js",
+    "library",
+    "components",
+    "vue3",
+    "frutiger",
+    "7.css",
+    "xp.css",
+    "98.css",
+    "aero"
+  ],
+  "peerDependenciesMeta": {
+    "7.css": {
+      "optional": true
+    },
+    "98.css": {
+      "optional": true
+    },
+    "@sakun/system.css": {
+      "optional": true
+    },
+    "xp.css": {
+      "optional": true
+    }
+  },
+  "private": false,
+  "scripts": {
+    "dev": "vite",
+    "build": "vue-tsc -b ./tsconfig.lib.json && vite build",
+    "build:demo": "vite build --config vite.config.demo.ts",
+    "preview": "vite preview",
+    "preview:demo": "vite preview --outDir demo",
+    "typecheck": "vue-tsc -b"
+  },
+  "type": "module",
+  "types": "dist/main.d.ts"
+}
