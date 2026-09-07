@@ -2,6 +2,7 @@ import { createApp } from 'vue'
 import 'highlight.js/styles/vs.css'
 import './style.css'
 import App from './App.vue'
+import { router } from './router'
 import { createWinTheme } from '../lib/main'
 
 // Themes are whole upstream stylesheets, swapped at runtime by the theme plugin.
@@ -11,6 +12,7 @@ import css7 from '7.css/dist/7.css?url'
 import cssSystem from '@sakun/system.css/dist/system.css?url'
 
 createApp(App)
+  .use(router)
   .use(createWinTheme({
     defaultTheme: 'win7',
     themes: {

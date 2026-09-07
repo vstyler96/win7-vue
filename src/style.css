@@ -1,15 +1,186 @@
 /*
- * Demo-local styles. No global box-sizing reset: the upstream frameworks size
- * their chrome for content-box (e.g. XP.css .title-bar { height: 21px } plus
- * padding); a universal border-box reset collapses those metrics.
+ * Demo-only design system. Everything here is namespaced under `.demo-*` so the
+ * runtime theme stylesheets (98.css / XP.css / 7.css / system.css) — which target
+ * bare `body`, `button`, `input`, `a`, `.window*` globally and load AFTER this file
+ * — never leak into the demo chrome, and the chrome never leaks into the themed
+ * component showcase. Shell controls that ARE themed elements (`button`, the search
+ * box) restate every property via a class so the class (0-1-0) wins over the theme's
+ * element selectors (0-0-1). No box-sizing reset: the frameworks size their chrome
+ * for content-box.
  */
+
+:root {
+  --demo-font: "Segoe UI", SegoeUI, "Helvetica Neue", system-ui, sans-serif;
+  --demo-ink: #eaf2ff;
+  --demo-ink-dim: rgba(234, 242, 255, 0.78);
+  --demo-panel: rgba(255, 255, 255, 0.14);
+  --demo-panel-hover: rgba(255, 255, 255, 0.28);
+  --demo-accent: #1f6fb0;
+}
+
 body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
-  background: linear-gradient(180deg, #245dab 0%, #3f8bc9 100%);
+  background: #041f4a;
 }
 
 #app {
   width: 100%;
+}
+
+/* Fixed wallpaper layer. 7.css and system.css set `body { background }`, so the
+   image can't live on body — a private class the themes never target keeps it
+   stable no matter which theme is active. */
+.demo-bg {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background: url("/windows_vista.jpg") center / cover no-repeat;
+}
+.demo-bg::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(4, 20, 50, 0.35), rgba(4, 20, 50, 0.12) 40%, rgba(4, 20, 50, 0.5));
+}
+
+.demo-app {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-height: 100vh;
+  box-sizing: border-box;
+}
+
+/* ---- Header ---- */
+.demo-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  gap: 12px;
+  font-family: var(--demo-font);
+  color: var(--demo-ink);
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+}
+.demo-brand h1 {
+  margin: 0;
+  font-size: 26px;
+  letter-spacing: 0.5px;
+}
+.demo-brand span {
+  color: var(--demo-ink-dim);
+}
+.demo-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.demo-themepick {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--demo-font);
+  color: var(--demo-ink);
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+/* Themed `button` globals fully overridden here. */
+.demo-search {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  margin: 0;
+  padding: 7px 12px;
+  border: 0;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+  color: #123;
+  font: 500 13px var(--demo-font);
+  line-height: 1.2;
+  cursor: pointer;
+}
+.demo-search:hover {
+  background: #fff;
+}
+.demo-search kbd {
+  min-width: 0;
+  padding: 0 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background: #eee;
+  font: 11px var(--demo-font);
+  color: #123;
+}
+
+/* ---- Body layout ---- */
+.demo-body {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+}
+
+.demo-nav {
+  flex: 0 0 190px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  position: sticky;
+  top: 16px;
+}
+
+/* RouterLink renders <a>; class beats any theme `a {}` rule. */
+.demo-nav-link {
+  display: block;
+  padding: 9px 12px;
+  border-radius: 8px;
+  background: var(--demo-panel);
+  color: var(--demo-ink);
+  font: 14px var(--demo-font);
+  text-decoration: none;
+  cursor: pointer;
+  transition: background 0.12s ease;
+}
+.demo-nav-link:hover {
+  background: var(--demo-panel-hover);
+}
+.demo-nav-link.router-link-active {
+  background: #fff;
+  color: var(--demo-accent);
+  font-weight: 600;
+}
+.demo-nav-icon {
+  margin-right: 6px;
+}
+
+.demo-content {
+  flex: 1;
+  min-width: 0;
+}
+.demo-window {
+  width: 100%;
+}
+/* Scroll the themed window body instead of the page. */
+.demo-window .window-body,
+.demo-window .window-pane {
+  max-height: 78vh;
+  overflow-y: auto;
+}
+
+@media (max-width: 720px) {
+  .demo-body {
+    flex-direction: column;
+  }
+  .demo-nav {
+    flex-direction: row;
+    flex-wrap: wrap;
+    position: static;
+    width: 100%;
+  }
 }

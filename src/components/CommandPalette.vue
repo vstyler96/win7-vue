@@ -4,7 +4,7 @@
   export interface PaletteEntry {
     label: string
     hint?: string
-    section: string
+    path: string
     anchor?: string
   }
 
@@ -20,7 +20,7 @@
     const q = query.value.trim().toLowerCase()
     if (!q) return entries
     return entries.filter(e =>
-      (e.label + ' ' + (e.hint ?? '') + ' ' + e.section).toLowerCase().includes(q),
+      (e.label + ' ' + (e.hint ?? '') + ' ' + e.path).toLowerCase().includes(q),
     )
   })
 
@@ -61,7 +61,7 @@
       <ul class="palette-list">
         <li
           v-for="(entry, i) in results"
-          :key="entry.section + (entry.anchor ?? '')"
+          :key="entry.path + (entry.anchor ?? '')"
           :class="{ active: i === active }"
           @mouseenter="active = i"
           @click="choose(entry)"
@@ -96,12 +96,18 @@
     font-family: system-ui, sans-serif;
   }
   .palette-input {
+    /* Fully declared so the active theme's global input rules can't leak in. */
     width: 100%;
     box-sizing: border-box;
+    min-width: 0;
     border: 0;
     border-bottom: 1px solid #e2e2e2;
+    border-radius: 0;
     padding: 14px 16px;
-    font-size: 15px;
+    font: 15px system-ui, sans-serif;
+    color: #1a1a1a;
+    background: #fff;
+    box-shadow: none;
     outline: none;
   }
   .palette-list {

@@ -23,13 +23,15 @@ export interface Section {
   id: SectionId;
   title: string;
   icon: string;
+  /** Router path for this section. */
+  path: string;
 }
 
 export const SECTIONS: Section[] = [
-  { id: "install", title: "Installation", icon: "📦" },
-  { id: "requirements", title: "Requirements", icon: "✅" },
-  { id: "themes", title: "Themes", icon: "🎨" },
-  { id: "components", title: "Components", icon: "🧩" },
+  { id: "install", title: "Installation", icon: "📦", path: "/installation" },
+  { id: "requirements", title: "Requirements", icon: "✅", path: "/requirements" },
+  { id: "themes", title: "Themes", icon: "🎨", path: "/themes" },
+  { id: "components", title: "Components", icon: "🧩", path: "/components" },
 ];
 
 const ALL: ThemeKey[] = ["win98", "winxp", "win7", "macos"];

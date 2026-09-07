@@ -2,9 +2,9 @@
   <section>
     <h2>Components</h2>
     <p>
-      Every component renders the verbatim upstream markup. A ✓ means that theme ships
+      Every component renders the verbatim upstream markup. A ✅ means that theme ships
       dedicated CSS for it; native controls &amp; behavior-only components look right
-      everywhere. Cells without a ✓ simply fall back to the browser default under that theme.
+      everywhere. Cells without a ✅ simply fall back to the browser default under that theme.
     </p>
 
     <div class="matrix-wrap">
@@ -20,7 +20,7 @@
           <tr v-for="c in COMPONENTS" :key="c.id">
             <td><a :href="`#cmp-${c.id}`" @click.prevent="scrollTo(c.id)">{{ c.name }}</a></td>
             <td v-for="t in THEMES" :key="t.key" class="cell">
-              {{ c.themes.includes(t.key) ? '✓' : '·' }}
+              {{ c.themes.includes(t.key) ? '✅' : '🟠' }}
             </td>
             <td class="matrix-note">{{ c.desc }}</td>
           </tr>
