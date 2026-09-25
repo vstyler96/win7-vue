@@ -49,51 +49,13 @@
 </script>
 
 <template>
-  <Collapse
-    v-model:open="isOpen"
-    class="code-preview"
-    :title
-  >
-    <pre class="code-preview-pre"><code
-      :class="`hljs language-${language}`"
-      v-html="highlightedCode"
-    /></pre>
-  </Collapse>
+  <div style="display: block; padding: 1em;">
+    <!-- eslint-disable -->
+    <Collapse
+      v-model:open="isOpen"
+      :title
+    ><pre><code :class="`hljs language-${language}`" v-html="highlightedCode" /></pre></Collapse>
+    <!-- eslint-enable -->
+  </div>
 </template>
 
-<style>
-  .code-preview {
-    margin-top: 12px;
-  }
-
-  .code-preview summary {
-    cursor: pointer;
-    user-select: none;
-  }
-
-  .code-preview-pre {
-    margin: 0;
-    padding: 12px;
-    background: #f8f8f8;
-    border: 1px solid #ddd;
-    border-radius: 3px;
-    overflow-x: auto;
-    font-family: Consolas, Monaco, 'Courier New', monospace;
-    font-size: 13px;
-    line-height: 1.4;
-  }
-
-  .code-preview-pre code {
-    background: transparent;
-    padding: 0;
-    white-space: pre;
-    word-break: normal;
-    word-wrap: normal;
-  }
-
-  .code-preview .hljs {
-    display: block;
-    overflow-x: auto;
-    background: transparent;
-  }
-</style>

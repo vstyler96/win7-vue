@@ -6,7 +6,7 @@
 </script>
 
 <template>
-  <div class="component-row">
+  <div>
     <Searchbox placeholder="Search..." @search="last = $event" />
     <Searchbox
       instant

@@ -7,6 +7,7 @@
     "98.css": "^0.1.20",
     "@eslint/js": "^10.0.1",
     "@sakun/system.css": "^0.1.11",
+    "@vstyler96/x.css": "^1.0.0",
     "@types/node": "^24.10.9",
     "@vitejs/plugin-vue": "^6.0.3",
     "@vue/tsconfig": "^0.7.0",
@@ -27,6 +28,7 @@
     "7.css": "^0.17.0",
     "98.css": ">=0.1.0",
     "@sakun/system.css": ">=0.1.0",
+    "@vstyler96/x.css": ">=1.0.0",
     "vue": "^3.5.18",
     "xp.css": ">=0.2.0",
     "vue-router": ">=4.0.0"
@@ -66,7 +68,10 @@
     "98.css",
     "aero",
     "system.css",
-    "macos"
+    "macos",
+    "osx",
+    "aqua",
+    "x.css"
   ],
   "peerDependenciesMeta": {
     "7.css": {
@@ -76,6 +81,9 @@
       "optional": true
     },
     "@sakun/system.css": {
+      "optional": true
+    },
+    "@vstyler96/x.css": {
       "optional": true
     },
     "xp.css": {

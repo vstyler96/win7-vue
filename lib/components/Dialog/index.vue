@@ -1,7 +1,7 @@
 <script setup lang="ts">
-  import { onUnmounted, watch } from 'vue'
   import WinWindow from '../Window/index.vue'
   import { useIsMac } from '../../composables/theme'
+  import { useDismiss } from '../../composables/dismiss'
 
   // Unknown attrs (closable, draggable, color, has-status, status-fields…) go to the Window.
   defineOptions({ name: 'WinDialog', inheritAttrs: false })
@@ -40,16 +40,8 @@
     emit(event)
   }
 
-  function handleKeydown(event: KeyboardEvent) {
-    if (event.key === 'Escape' && closeOnEscape && !persistent) dismiss('close')
-  }
-
-  watch(show, isOpen => {
-    if (isOpen) document.addEventListener('keydown', handleKeydown)
-    else document.removeEventListener('keydown', handleKeydown)
-  }, { immediate: true })
-
-  onUnmounted(() => document.removeEventListener('keydown', handleKeydown))
+  // Escape only; the backdrop handles outside clicks.
+  useDismiss(show, { onDismiss: () => closeOnEscape && !persistent && dismiss('close') })
 </script>
 
 <template>

@@ -7,7 +7,7 @@
 </script>
 
 <template>
-  <div class="component-row">
+  <div>
     <Window title="Basic Window" active>
       <p>This is a basic window component.</p>
     </Window>

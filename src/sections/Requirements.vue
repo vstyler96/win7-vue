@@ -1,7 +1,7 @@
 <script setup lang="ts">
   import { Groupbox } from 'win7-vue'
   import pkg from '../../package.json'
-  import { THEMES } from '../catalog'
+  import { PROVIDERS, THEMES } from '../catalog'
 
   const notes: Record<string, string> = {
     'vue': 'defineModel, generics, <script setup>',
@@ -10,6 +10,7 @@
     '98.css': 'Windows 98',
     'xp.css': 'Windows XP',
     '@sakun/system.css': 'Mac OS (family: "mac")',
+    '@vstyler96/x.css': 'Mac OS X Lion / Aqua (family: "mac")',
   }
 
   const optional: Record<string, { optional?: boolean }> = pkg.peerDependenciesMeta
@@ -28,7 +29,7 @@
     </p>
 
     <Groupbox title="Peer dependencies">
-      <table class="req-table">
+      <table>
         <thead>
           <tr><th>Package</th><th>Version</th><th>Required</th><th>Notes</th></tr>
         </thead>
@@ -50,26 +51,37 @@
       <code>&lt;link&gt;</code> and swaps it at runtime.
     </p>
 
+    <h3>Theme providers</h3>
+    <p>
+      Any stylesheet that follows the upstream markup works. We maintain forks that will
+      <strong>fully support every win7-vue component</strong> in the future. The official
+      projects work too; the support table under Components shows which components they style.
+    </p>
+    <table>
+      <thead>
+        <tr><th>Theme</th><th>Our fork (recommended)</th><th>Official upstream</th></tr>
+      </thead>
+      <tbody>
+        <tr
+          v-for="p in PROVIDERS"
+          :key="p.theme"
+        >
+          <td>{{ p.theme }}</td>
+          <td><a :href="`https://github.com/${p.fork}`">{{ p.fork }}</a></td>
+          <td><a :href="`https://github.com/${p.official}`">{{ p.official }}</a></td>
+        </tr>
+      </tbody>
+    </table>
+
     <h3>Bundled themes here</h3>
-    <p>This demo registers all four families:</p>
+    <p>This demo registers all of these themes:</p>
     <ul>
-      <li v-for="t in THEMES" :key="t.key">
+      <li
+        v-for="t in THEMES"
+        :key="t.key"
+      >
         <strong>{{ t.label }}</strong>
       </li>
     </ul>
   </section>
 </template>
-
-<style scoped>
-  .req-table {
-    border-collapse: collapse;
-    width: 100%;
-  }
-  .req-table th,
-  .req-table td {
-    text-align: left;
-    padding: 4px 10px;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.15);
-  }
-  .req-table th { font-weight: 700; }
-</style>

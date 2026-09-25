@@ -14,7 +14,7 @@
 
   const familyOptions = [
     { id: 'windows', name: 'windows (98 / XP / 7 markup)' },
-    { id: 'mac', name: 'mac (system.css markup)' },
+    { id: 'mac', name: 'mac (system.css / X.css markup)' },
   ]
 
   function addTheme() {
@@ -36,7 +36,7 @@
 // register any upstream (or your own) stylesheet at runtime
 theme.add('win7-aero-cdn', {
   url: 'https://unpkg.com/7.css/dist/7.css',
-  family: 'windows', // or 'mac' for system.css-style markup
+  family: 'windows', // or 'mac' for system.css / X.css markup
 })
 theme.change('win7-aero-cdn')`
 </script>
@@ -51,35 +51,35 @@ theme.change('win7-aero-cdn')`
     </p>
 
     <Groupbox title="Registered themes">
-      <div class="theme-grid">
+      <p>
         <Button
           v-for="key in theme.themes.value"
           :key="key"
-          :class="{ 'is-active': key === theme.name.value }"
           @click="theme.change(key)"
         >
           {{ themeLabel(key) }}<span v-if="key === theme.name.value"> ✓</span>
         </Button>
-      </div>
+      </p>
       <p>Active: <strong>{{ themeLabel(theme.name.value) }}</strong> ({{ theme.family.value }})</p>
     </Groupbox>
 
     <h3>Create a custom theme</h3>
     <p>Point at any Windows/Mac-family stylesheet URL and register it live:</p>
     <Groupbox title="Add a theme">
-      <div class="form-row">
+      <p>
         <label>Name:</label>
         <Textbox v-model="name" placeholder="my-theme" />
-      </div>
-      <div class="form-row">
+      </p>
+      <p>
         <label>Stylesheet URL:</label>
         <Textbox v-model="url" placeholder="https://unpkg.com/7.css/dist/7.css" />
-      </div>
-      <div class="form-row">
+      </p>
+      <p>
         <label>Family:</label>
         <Dropdown v-model="family" :options="familyOptions" />
-      </div>
-      <p v-if="error" class="theme-error">
+      </p>
+      <p v-if="error" role="alert">
+        ⚠️
         {{ error }}
       </p>
       <Button @click="addTheme">
@@ -97,20 +97,3 @@ theme.change('win7-aero-cdn')`
   </section>
 </template>
 
-<style scoped>
-  .theme-grid {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin-bottom: 8px;
-  }
-  .theme-grid .is-active { font-weight: 700; }
-  .form-row {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-bottom: 8px;
-  }
-  .form-row > label { min-width: 110px; }
-  .theme-error { color: #b00020; }
-</style>

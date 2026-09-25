@@ -3,6 +3,13 @@ init: help
 build: ## Build the project
 	@npm run build
 
+dev: ## Run the demo page with hot reload
+	@npm run dev
+
+preview: ## Build the demo page and serve it like production
+	@npm run build:demo
+	@npm run preview:demo
+
 lint: ## Lint the project
 	@npm run lint
 

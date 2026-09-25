@@ -11,6 +11,7 @@
         "@sakun/system.css": "^0.1.11",
         "@types/node": "^24.10.9",
         "@vitejs/plugin-vue": "^6.0.3",
+        "@vstyler96/x.css": "^1.0.0",
         "@vue/tsconfig": "^0.7.0",
         "eslint": "^10.11.0",
         "eslint-plugin-vue": "^10.11.1",
@@ -29,6 +30,7 @@
         "7.css": "^0.17.0",
         "98.css": ">=0.1.0",
         "@sakun/system.css": ">=0.1.0",
+        "@vstyler96/x.css": ">=1.0.0",
         "vue": "^3.5.18",
         "vue-router": ">=4.0.0",
         "xp.css": ">=0.2.0",
@@ -37,6 +39,7 @@
         "7.css",
         "98.css",
         "@sakun/system.css",
+        "@vstyler96/x.css",
         "vue-router",
         "xp.css",
       ],
@@ -252,6 +255,8 @@
     "@volar/source-map": ["@volar/source-map@2.4.23", "", {}, "sha512-Z1Uc8IB57Lm6k7q6KIDu/p+JWtf3xsXJqAX/5r18hYOTpJyBn0KXUR8oTJ4WFYOcDzWC9n3IflGgHowx6U6z9Q=="],
 
     "@volar/typescript": ["@volar/typescript@2.4.23", "", { "dependencies": { "@volar/language-core": "2.4.23", "path-browserify": "^1.0.1", "vscode-uri": "^3.0.8" } }, "sha512-lAB5zJghWxVPqfcStmAP1ZqQacMpe90UrP5RJ3arDyrhy4aCUQqmxPPLB2PWDKugvylmO41ljK7vZ+t6INMTag=="],
+
+    "@vstyler96/x.css": ["@vstyler96/x.css@1.0.0", "", { "dependencies": { "draggabilly": "^3.0.0" } }, "sha512-8BHNO11Nqg3bGP3Erwu9lqT7iM9F0mXA8sfJMXv+nP0pcecqBEn3IYP0GFmXRvKAg9oCAjzqKNQX7VJFPuedCg=="],
 
     "@vue-macros/common": ["@vue-macros/common@3.1.4", "", { "dependencies": { "@vue/compiler-sfc": "^3.5.22", "ast-kit": "^2.1.2", "local-pkg": "^1.1.2", "magic-string-ast": "^1.0.2", "unplugin-utils": "^0.3.0" }, "peerDependencies": { "vue": "^2.7.0 || ^3.2.25" }, "optionalPeers": ["vue"] }, "sha512-/5Fv+6DgIcM9ajY05ZmKBv+LMX1M9A0X+IUwDRVdt67ciw8OV9bvG2r34p3RiEadlsQybjhKPRKNXDC8Bp23cw=="],
 

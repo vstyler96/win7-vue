@@ -3,7 +3,7 @@
 </script>
 
 <template>
-  <div class="component-row balloon-demos">
+  <div>
     <Balloon caption="Top tooltip" top />
     <Balloon caption="Bottom tooltip" bottom />
     <Balloon caption="Left tooltip" left />

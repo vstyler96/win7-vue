@@ -7,7 +7,7 @@ npm install win7-vue
 pnpm add win7-vue
 
 # plus at least one upstream theme stylesheet (optional peers)
-bun add 7.css 98.css xp.css @sakun/system.css`
+bun add 7.css 98.css xp.css @sakun/system.css @vstyler96/x.css`
 
   const mainTs = `// src/main.ts — wire the library into your app
 import { createApp } from 'vue'
@@ -20,6 +20,7 @@ import css98 from '98.css/dist/98.css?url'
 import cssXP from 'xp.css/dist/XP.css?url'
 import css7 from '7.css/dist/7.css?url'
 import cssSystem from '@sakun/system.css/dist/system.css?url'
+import cssX from '@vstyler96/x.css/dist/x.css?url'
 
 createApp(App)
   .use(win7vue) // registers <WinWindow>, <WinButton>, … globally
@@ -31,6 +32,7 @@ createApp(App)
       winxp: cssXP,
       win7: css7,
       macos: { url: cssSystem, family: 'mac' },
+      osx: { url: cssX, family: 'mac' }, // X.css reuses system.css markup
     },
   }))
   .mount('#app')`
@@ -73,18 +75,17 @@ declare module 'vue' {
       (<a href="https://github.com/vstyler96/98.css">98.css</a>,
       <a href="https://github.com/vstyler96/xp.css">XP.css</a>,
       <a href="https://github.com/vstyler96/7.css">7.css</a>) plus
-      <a href="https://github.com/vstyler96/system.css">system.css</a> for Mac OS. It ships
+      <a href="https://github.com/vstyler96/system.css">system.css</a> /
+      <a href="https://github.com/vstyler96/X.css">X.css</a> for Mac OS. It ships
       <strong>zero CSS of its own</strong> — the look comes entirely from the active upstream
       stylesheet, which you swap at runtime.
     </p>
     <p>
       Those links are our forks, which will fully support every win7-vue component in the
-      future. The official projects work too:
-      <a href="https://github.com/jdan/98.css">jdan/98.css</a>,
-      <a href="https://github.com/botoxparty/XP.css">botoxparty/XP.css</a>,
-      <a href="https://github.com/khang-nd/7.css">khang-nd/7.css</a> and
-      <a href="https://github.com/sakofchit/system.css">sakofchit/system.css</a>.
-      The support table under Components shows what each one styles.
+      future. The official projects work too; see
+      <RouterLink to="/requirements">
+        Requirements → Theme providers
+      </RouterLink>.
     </p>
 
     <h3>1. Install</h3>

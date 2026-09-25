@@ -35,7 +35,7 @@
   </MenuBar>
 
   <p>Menu with Checkbox/Radio options:</p>
-  <Menu class="demo-menu">
+  <Menu>
     <MenuItem
       v-model="iconSize"
       :option="{ as: 'radio', id: 'size-lg', name: 'size' }"

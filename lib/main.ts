@@ -27,6 +27,8 @@ export default {
 export * from './components'
 export { default as useDraggable } from './composables/draggable'
 export type { DraggableOptions, DraggableEvents } from './composables/draggable'
+export { useDismiss } from './composables/dismiss'
+export type { DismissOptions } from './composables/dismiss'
 export { createWinTheme, useTheme, useThemeFamily, useIsMac, ThemeSymbol } from './composables/theme'
 export type { ThemeOptions, ThemeInstance, ThemeDefinition, ThemeFamily } from './composables/theme'
 export type { CollapseChild } from './components/Collapse/index.vue'

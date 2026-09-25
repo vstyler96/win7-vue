@@ -7,7 +7,7 @@
 </script>
 
 <template>
-  <div class="component-row">
+  <div>
     <Button @click="open = true">
       Show Dialog
     </Button>

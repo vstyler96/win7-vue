@@ -7,15 +7,15 @@
 </script>
 
 <template>
-  <div class="form-group">
+  <div>
     <label>Text Input:</label>
     <Textbox v-model="text" placeholder="Enter text..." />
   </div>
-  <div class="form-group">
+  <div>
     <label>Textarea:</label>
     <Textbox v-model="long" type="textarea" />
   </div>
-  <div class="form-group">
+  <div>
     <label>Readonly:</label>
     <Textbox v-model="text" readonly />
   </div>

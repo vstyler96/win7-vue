@@ -6,7 +6,7 @@
 </script>
 
 <template>
-  <div class="component-row">
+  <div>
     <Icon icon="monitor" size="24" />
     <Icon icon="monitor" size="48" />
     <Icon :icon="star" size="48" />

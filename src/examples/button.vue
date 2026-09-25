@@ -3,7 +3,7 @@
 </script>
 
 <template>
-  <div class="component-row">
+  <div>
     <Button text="Default Button" />
     <Button text="Link Button" href="#" />
     <Button text="Router Button" to="/themes" />
