@@ -15,7 +15,7 @@
 
 <script setup lang="ts">
   import { computed, ref } from 'vue'
-  import { Collapse } from '../../lib/components'
+  import { Collapse } from 'win7-vue'
 
   defineOptions({ name: 'CodePreview' })
 
@@ -38,7 +38,7 @@
     const trimmedCode = code.trim()
 
     try {
-      return hljs.highlight(trimmedCode, { language: language || 'vue' }).value
+      return hljs.highlight(trimmedCode, { language }).value
     } catch {
       return trimmedCode
         .replace(/&/g, '&amp;')

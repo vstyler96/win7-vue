@@ -1,5 +1,5 @@
 <script setup lang="ts" generic="V extends string | number | boolean">
-  import { computed } from 'vue'
+  import { uniqueId } from '../../utils/helpers'
 
   defineOptions({ name: 'WinRadio' })
 
@@ -17,13 +17,7 @@
 
   const model = defineModel<V | null>({ default: null })
 
-  const id = computed(() => `${name}-${value}-radio`)
-
-  function onChange(event: Event) {
-    if ((event.target as HTMLInputElement).checked) {
-      model.value = value
-    }
-  }
+  const id = uniqueId('radio')
 </script>
 
 <template>
@@ -35,10 +29,10 @@
       :name
       type="radio"
       :value
-      @change="onChange"
+      @change="model = value"
     >
-    <slot>
-      <label :for="id">{{ label }}</label>
-    </slot>
+    <label :for="id">
+      <slot>{{ label }}</slot>
+    </label>
   </div>
 </template>

@@ -1,18 +1,14 @@
 <script setup lang="ts">
   defineOptions({ name: 'WinGroupbox' })
 
-  const {
-    title = undefined,
-    label = undefined,
-  } = defineProps<{
-    title?: string
-    label?: string
-  }>()
+  const { title = undefined } = defineProps<{ title?: string }>()
 </script>
 
 <template>
   <fieldset>
-    <legend v-if="title || label">{{ title || label }}</legend>
+    <legend v-if="title">
+      {{ title }}
+    </legend>
     <slot />
   </fieldset>
 </template>

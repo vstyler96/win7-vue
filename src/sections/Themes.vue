@@ -1,7 +1,6 @@
 <script setup lang="ts">
   import { ref } from 'vue'
-  import { Button, Groupbox, Textbox, Dropdown } from '../../lib/components'
-  import { useTheme } from '../../lib/main'
+  import { Button, Groupbox, Textbox, Dropdown, useTheme } from 'win7-vue'
   import CodePreview from '../components/CodePreview.vue'
   import { themeLabel } from '../catalog'
 
@@ -80,12 +79,21 @@ theme.change('win7-aero-cdn')`
         <label>Family:</label>
         <Dropdown v-model="family" :options="familyOptions" />
       </div>
-      <p v-if="error" class="theme-error">{{ error }}</p>
-      <Button @click="addTheme">Add &amp; activate</Button>
+      <p v-if="error" class="theme-error">
+        {{ error }}
+      </p>
+      <Button @click="addTheme">
+        Add &amp; activate
+      </Button>
     </Groupbox>
 
     <h3>Doing it in code</h3>
-    <CodePreview :code="addCode" language="typescript" title="theme.add()" open />
+    <CodePreview
+      :code="addCode"
+      language="typescript"
+      title="theme.add()"
+      open
+    />
   </section>
 </template>
 

@@ -3,23 +3,14 @@ import 'highlight.js/styles/vs.css'
 import './style.css'
 import App from './App.vue'
 import { router } from './router'
-import { createWinTheme } from '../lib/main'
+import { createWinTheme } from 'win7-vue'
+import { THEMES } from './catalog'
 
 // Themes are whole upstream stylesheets, swapped at runtime by the theme plugin.
-import css98 from '98.css/dist/98.css?url'
-import cssXP from 'xp.css/dist/XP.css?url'
-import css7 from '7.css/dist/7.css?url'
-import cssSystem from '@sakun/system.css/dist/system.css?url'
-
 createApp(App)
   .use(router)
   .use(createWinTheme({
     defaultTheme: 'win7',
-    themes: {
-      win98: css98,
-      winxp: cssXP,
-      win7: css7,
-      macos: { url: cssSystem, family: 'mac' },
-    },
+    themes: Object.fromEntries(THEMES.map(t => [t.key, t.theme])),
   }))
   .mount('#app')

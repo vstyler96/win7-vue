@@ -1,14 +1,21 @@
 <script setup lang="ts">
-  import { Groupbox } from '../../lib/components'
+  import { Groupbox } from 'win7-vue'
+  import pkg from '../../package.json'
   import { THEMES } from '../catalog'
 
-  const peers = [
-    { name: 'vue', range: '^3.5', required: true, note: 'defineModel, generics, <script setup>' },
-    { name: '7.css', range: '^0.17', required: false, note: 'Windows 7 (Aero) — also searchbox, balloons, glass' },
-    { name: '98.css', range: '>=0.1', required: false, note: 'Windows 98' },
-    { name: 'xp.css', range: '>=0.2', required: false, note: 'Windows XP' },
-    { name: '@sakun/system.css', range: '>=0.1', required: false, note: 'Mac OS (family: "mac")' },
-  ]
+  const notes: Record<string, string> = {
+    'vue': 'defineModel, generics, <script setup>',
+    'vue-router': 'only for Button/Link `to` (falls back to <a>)',
+    '7.css': 'Windows 7 (Aero) — also searchbox, balloons, glass',
+    '98.css': 'Windows 98',
+    'xp.css': 'Windows XP',
+    '@sakun/system.css': 'Mac OS (family: "mac")',
+  }
+
+  const optional: Record<string, { optional?: boolean }> = pkg.peerDependenciesMeta
+  const peers = Object.entries(pkg.peerDependencies).map(([name, range]) => ({
+    name, range, required: !optional[name]?.optional, note: notes[name],
+  }))
 </script>
 
 <template>
@@ -46,7 +53,9 @@
     <h3>Bundled themes here</h3>
     <p>This demo registers all four families:</p>
     <ul>
-      <li v-for="t in THEMES" :key="t.key"><strong>{{ t.label }}</strong></li>
+      <li v-for="t in THEMES" :key="t.key">
+        <strong>{{ t.label }}</strong>
+      </li>
     </ul>
   </section>
 </template>

@@ -48,17 +48,20 @@
       </main>
     </div>
 
-    <CommandPalette v-model="paletteOpen" :entries="entries" @select="onSelect" />
+    <CommandPalette
+      v-model="paletteOpen"
+      :entries="entries"
+      @select="onSelect"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
   import { computed, onMounted, onUnmounted, nextTick, ref } from 'vue'
   import { useRoute, useRouter } from 'vue-router'
-  import { Dropdown, Window } from '../lib/components'
-  import { useTheme } from '../lib/main'
+  import { Dropdown, Window, useTheme } from 'win7-vue'
   import CommandPalette, { type PaletteEntry } from './components/CommandPalette.vue'
-  import { COMPONENTS, SECTIONS, THEMES, themeLabel } from './catalog'
+  import { COMPONENTS, SECTIONS, scrollToAnchor, themeLabel, themeShort } from './catalog'
 
   const route = useRoute()
   const router = useRouter()
@@ -75,13 +78,13 @@
   const windowTitle = computed(() => (route.meta.title as string | undefined) ?? 'win7-vue')
 
   const paletteOpen = ref(false)
-  const modKey = navigator.platform.toLowerCase().includes('mac') ? '⌘' : 'Ctrl'
+  const modKey = /mac/i.test(navigator.userAgent) ? '⌘' : 'Ctrl'
 
   const entries = computed<PaletteEntry[]>(() => [
     ...SECTIONS.map(s => ({ label: s.title, hint: 'section', path: s.path })),
     ...COMPONENTS.map(c => ({
       label: c.name,
-      hint: c.themes.map(k => THEMES.find(t => t.key === k)?.short).join(' '),
+      hint: c.themes.map(themeShort).join(' '),
       path: '/components',
       anchor: `cmp-${c.id}`,
     })),
@@ -90,7 +93,7 @@
   async function onSelect(entry: PaletteEntry) {
     if (route.path !== entry.path) await router.push(entry.path)
     await nextTick()
-    if (entry.anchor) document.getElementById(entry.anchor)?.scrollIntoView({ behavior: 'smooth' })
+    if (entry.anchor) scrollToAnchor(entry.anchor)
   }
 
   function onKeydown(e: KeyboardEvent) {

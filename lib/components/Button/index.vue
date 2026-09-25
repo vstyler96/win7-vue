@@ -1,29 +1,25 @@
 <script setup lang="ts">
-  import { useThemeFamily } from '../../composables/theme'
+  import { useIsMac } from '../../composables/theme'
+  import { useLinkTag } from '../../composables/link'
 
   defineOptions({ name: 'WinButton' })
 
-  const {
-    text = undefined,
-    href = undefined,
-    to = undefined,
-    target = undefined,
-  } = defineProps<{
+  const props = defineProps<{
     text?: string
     href?: string
     to?: string | object
     target?: string
   }>()
 
-  const family = useThemeFamily()
+  const isMac = useIsMac()
+  const tag = useLinkTag(() => props)
 </script>
 
 <template>
   <component
-    :is="to ? 'router-link' : href ? 'a' : 'button'"
-    :class="family === 'mac' && !href && !to ? 'btn' : undefined"
-    :href
-    :to
+    :is="tag.is"
+    v-bind="tag.attrs"
+    :class="isMac && tag.is === 'button' ? 'btn' : undefined"
     :target
   >
     <slot name="prepend" />

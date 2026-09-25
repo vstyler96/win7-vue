@@ -14,7 +14,8 @@
     "erasableSyntaxOnly": true,
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true,
-    "moduleResolution": "bundler"
+    "moduleResolution": "bundler",
+    "paths": { "win7-vue": ["./lib/main.ts"] }
   },
   "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.vue"]
 }

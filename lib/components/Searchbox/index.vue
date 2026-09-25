@@ -1,39 +1,27 @@
 <script setup lang="ts">
-  import { ref } from 'vue'
-  import { uniqueId } from '../../utils/helpers'
-
   defineOptions({ name: 'WinSearchbox' })
 
   const {
     instant = false,
     placeholder = 'Search',
   } = defineProps<{
+    /** Plain search field that emits `search` on every keystroke (no button). */
     instant?: boolean
     placeholder?: string
   }>()
 
   const emit = defineEmits<{ search: [value: string] }>()
 
-  const id = `searchbox-${uniqueId()}`
-  const searchValue = ref('')
-
-  function onSearch() {
-    emit('search', searchValue.value)
-  }
-
-  function onKeyup(event: KeyboardEvent) {
-    if (event.key === 'Enter') onSearch()
-  }
+  const model = defineModel<string>({ default: '' })
 </script>
 
 <template>
   <input
     v-if="instant"
-    :id
-    v-model="searchValue"
+    v-model="model"
     :placeholder
     type="search"
-    @keyup="onKeyup"
+    @input="emit('search', model)"
   >
 
   <div
@@ -41,13 +29,14 @@
     class="searchbox"
   >
     <input
-      v-model="searchValue"
+      v-model="model"
       :placeholder
       type="search"
+      @keyup.enter="emit('search', model)"
     >
     <button
       aria-label="search"
-      @click="onSearch"
+      @click="emit('search', model)"
     />
   </div>
 </template>

@@ -1,16 +1,16 @@
 <script setup lang="ts">
-  import { useThemeFamily } from '../../composables/theme'
+  import { useIsMac } from '../../composables/theme'
 
   defineOptions({ name: 'WinMenuBar' })
 
   const { canHover = false } = defineProps<{ canHover?: boolean }>()
 
-  const family = useThemeFamily()
+  const isMac = useIsMac()
 </script>
 
 <template>
   <ul
-    :role="family === 'mac' ? 'menu-bar' : 'menubar'"
+    :role="isMac ? 'menu-bar' : 'menubar'"
     :class="{ 'can-hover': canHover }"
   >
     <slot />

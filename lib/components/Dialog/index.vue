@@ -1,9 +1,10 @@
 <script setup lang="ts">
   import { onUnmounted, watch } from 'vue'
   import WinWindow from '../Window/index.vue'
-  import { useThemeFamily } from '../../composables/theme'
+  import { useIsMac } from '../../composables/theme'
 
-  defineOptions({ name: 'WinDialog' })
+  // Unknown attrs (closable, draggable, color, has-status, status-fields…) go to the Window.
+  defineOptions({ name: 'WinDialog', inheritAttrs: false })
 
   const Z_INDEX_DIALOG = 1000
 
@@ -11,14 +12,8 @@
     title = 'Dialog',
     message = '',
     width = '400px',
-    color = '#4580c4',
-    hasStatus = false,
-    statusFields = [],
-    permanent = false,
     persistent = false,
     cancelable = true,
-    closable = false,
-    draggable = false,
     closeOnBackdrop = true,
     closeOnEscape = true,
     showActions = true,
@@ -26,67 +21,35 @@
     title?: string
     message?: string
     width?: string
-    color?: string
-    hasStatus?: boolean
-    statusFields?: string[]
-    permanent?: boolean
+    /** Never closes itself: Esc/backdrop are ignored and buttons only emit. */
     persistent?: boolean
     cancelable?: boolean
-    closable?: boolean
-    draggable?: boolean
     closeOnBackdrop?: boolean
     closeOnEscape?: boolean
     showActions?: boolean
   }>()
 
-  const emit = defineEmits<{
-    accept: []
-    cancel: []
-    close: []
-  }>()
+  const emit = defineEmits<(e: 'accept' | 'cancel' | 'close') => void>()
 
   const show = defineModel<boolean>({ default: false })
 
-  const family = useThemeFamily()
+  const isMac = useIsMac()
+
+  function dismiss(event: 'accept' | 'cancel' | 'close') {
+    if (!persistent) show.value = false
+    emit(event)
+  }
 
   function handleKeydown(event: KeyboardEvent) {
-    if (event.key === 'Escape' && closeOnEscape && !permanent && !persistent) {
-      show.value = false
-      emit('close')
-    }
+    if (event.key === 'Escape' && closeOnEscape && !persistent) dismiss('close')
   }
 
   watch(show, isOpen => {
-    if (isOpen) {
-      document.addEventListener('keydown', handleKeydown)
-    } else {
-      document.removeEventListener('keydown', handleKeydown)
-    }
+    if (isOpen) document.addEventListener('keydown', handleKeydown)
+    else document.removeEventListener('keydown', handleKeydown)
   }, { immediate: true })
 
-  onUnmounted(() => {
-    document.removeEventListener('keydown', handleKeydown)
-  })
-
-  function onAccept() {
-    if (!persistent) show.value = false
-    emit('accept')
-  }
-
-  function onCancel() {
-    if (!persistent) show.value = false
-    emit('cancel')
-  }
-
-  function onClose() {
-    if (permanent) return
-    if (!persistent) show.value = false
-    emit('close')
-  }
-
-  function onBackdropClick() {
-    if (closeOnBackdrop && !permanent && !persistent) onClose()
-  }
+  onUnmounted(() => document.removeEventListener('keydown', handleKeydown))
 </script>
 
 <template>
@@ -110,26 +73,22 @@
           background: 'rgba(0, 0, 0, 0.2)',
           backdropFilter: 'blur(2px)',
         }"
-        @click="onBackdropClick"
+        @click="closeOnBackdrop && !persistent && dismiss('close')"
       />
 
       <WinWindow
+        v-bind="$attrs"
         active
-        :closable
-        :color
-        :default-x="0"
-        :default-y="0"
         :constrain-to-viewport="false"
-        :draggable
-        :has-status
-        :status-fields
         :title
         :width
         style="position: relative; z-index: 1;"
-        @close="onClose"
+        @close="dismiss('close')"
       >
         <slot>
-          <p v-if="message">{{ message }}</p>
+          <p v-if="message">
+            {{ message }}
+          </p>
         </slot>
 
         <section
@@ -138,21 +97,21 @@
         >
           <button
             v-if="cancelable"
-            :class="family === 'mac' ? 'btn' : undefined"
-            @click="onCancel"
+            :class="isMac ? 'btn' : undefined"
+            @click="dismiss('cancel')"
           >
             Cancel
           </button>
           <button
-            :class="family === 'mac' ? 'btn btn-default' : 'default'"
-            @click="onAccept"
+            :class="isMac ? 'btn btn-default' : 'default'"
+            @click="dismiss('accept')"
           >
             OK
           </button>
         </section>
 
         <template
-          v-if="hasStatus && $slots.status"
+          v-if="$slots.status"
           #status
         >
           <slot name="status" />

@@ -5,15 +5,15 @@
 
   const {
     variant = undefined,
-    inert = false,
+    animate = true,
     transition = 300,
     indeterminate = false,
     progress = 0,
   } = defineProps<{
     /** Upstream state class: 'error' | 'paused' (7.css). */
     variant?: string
-    /** Disables the upstream 'animate' class. */
-    inert?: boolean
+    /** Upstream 'animate' class (shimmer). */
+    animate?: boolean
     /** Width transition duration in ms. */
     transition?: number | string
     indeterminate?: boolean
@@ -32,7 +32,7 @@
 <template>
   <div
     role="progressbar"
-    :class="[variant, { marquee: indeterminate, animate: !inert }]"
+    :class="[variant, { marquee: indeterminate, animate }]"
     :aria-valuemin="indeterminate ? undefined : 0"
     :aria-valuemax="indeterminate ? undefined : 100"
     :aria-valuenow="indeterminate ? undefined : now"

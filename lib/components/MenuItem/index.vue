@@ -3,13 +3,13 @@
     as: 'checkbox' | 'radio'
     id: string
     name?: string
-    nativeValue?: any
   }
 </script>
 
 <script setup lang="ts">
-  import { computed, useSlots } from 'vue'
-  import { useThemeFamily } from '../../composables/theme'
+  import { computed } from 'vue'
+  import { useIsMac } from '../../composables/theme'
+  import { toggleIn } from '../../utils/helpers'
 
   defineOptions({ name: 'WinMenuItem' })
 
@@ -17,90 +17,54 @@
     option = undefined,
     value = undefined,
   } = defineProps<{
+    /** Renders the item as a checkbox/radio menu option. */
     option?: MenuItemOption
+    /** Radio: the value it selects. Checkbox: the value it toggles (defaults to option.id in array models). */
     value?: string | number | boolean
   }>()
 
-  const model = defineModel<any>()
+  const model = defineModel<unknown>()
 
-  const slots = useSlots()
+  const isMac = useIsMac()
 
-  const family = useThemeFamily()
-
-  const role = computed(() => (family.value === 'mac' ? 'menu-item' : 'menuitem'))
-
-  const hasSubmenu = computed(() => {
-    const nodes = slots.default?.({}) ?? []
-    return nodes.some((node: any) => node.type?.name === 'WinMenu' || node.type === 'ul')
-  })
+  const checkValue = computed(() => value ?? option?.id)
 
   const isChecked = computed(() => {
     if (!option) return false
-
-    if (option.as === 'radio') {
-      return model.value === option.nativeValue
-    }
-
-    if (value !== undefined) {
-      return model.value === value
-    }
-    if (Array.isArray(model.value)) {
-      return model.value.includes(option.id)
-    }
+    if (Array.isArray(model.value)) return model.value.includes(checkValue.value)
+    if (option.as === 'radio' || value !== undefined) return model.value === value
     return !!model.value
   })
 
-  function handleOptionChange(event: Event) {
+  function onChange() {
     if (!option) return
-
-    event.stopPropagation()
-
-    if (option.as === 'radio') {
-      model.value = option.nativeValue
-      return
-    }
-
-    if (value !== undefined) {
-      model.value = isChecked.value ? undefined : value
-      return
-    }
-
-    if (Array.isArray(model.value)) {
-      model.value = isChecked.value
-        ? model.value.filter((v: any) => v !== option.id)
-        : [...model.value, option.id]
-      return
-    }
-
-    model.value = !model.value
+    if (option.as === 'radio') model.value = value
+    else if (Array.isArray(model.value)) model.value = toggleIn(model.value, checkValue.value)
+    else if (value !== undefined) model.value = isChecked.value ? undefined : value
+    else model.value = !model.value
   }
 </script>
 
 <template>
   <li
-    v-if="option"
-    :role="role"
+    :role="isMac ? 'menu-item' : 'menuitem'"
     tabindex="0"
+    :aria-haspopup="$slots.submenu ? true : undefined"
   >
-    <input
-      :id="option.id"
-      :checked="isChecked"
-      :name="option.name || option.id"
-      :type="option.as"
-      :value="option.nativeValue ?? value"
-      @change="handleOptionChange"
-    >
-    <label :for="option.id">
-      <slot />
-    </label>
-  </li>
-
-  <li
-    v-else
-    :role="role"
-    tabindex="0"
-    :aria-haspopup="hasSubmenu || undefined"
-  >
-    <slot />
+    <template v-if="option">
+      <input
+        :id="option.id"
+        :checked="isChecked"
+        :name="option.name ?? option.id"
+        :type="option.as"
+        :value
+        @change.stop="onChange"
+      >
+      <label :for="option.id">
+        <slot />
+      </label>
+    </template>
+    <slot v-else />
+    <slot name="submenu" />
   </li>
 </template>

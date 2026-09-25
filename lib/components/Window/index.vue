@@ -1,14 +1,11 @@
 <script setup lang="ts">
-  import { computed, ref, useSlots } from 'vue'
-  import useDraggable from '../../composables/draggable'
-  import { useThemeFamily } from '../../composables/theme'
-  import { uniqueId } from '../../utils/helpers'
-  import type { CSSProperties } from 'vue'
+  import { computed, ref, useSlots, type CSSProperties } from 'vue'
+  import useDraggable, { BASE_Z_INDEX } from '../../composables/draggable'
+  import { useIsMac } from '../../composables/theme'
 
   defineOptions({ name: 'WinWindow' })
 
   const TITLE_BAR_HEIGHT = 35
-  const BASE_Z_INDEX = 900
 
   const {
     active = false,
@@ -59,11 +56,10 @@
     focus: []
   }>()
 
-  const id = `window-${uniqueId()}`
   const windowRef = ref<HTMLElement | null>(null)
   const headerRef = ref<HTMLElement | null>(null)
 
-  const family = useThemeFamily()
+  const isMac = useIsMac()
 
   const slots = useSlots()
 
@@ -79,12 +75,12 @@
     windowRef,
     headerRef,
     {
-      enabled: draggable,
+      enabled: () => draggable,
       defaultX,
       defaultY,
-      snapToEdges,
-      snapThreshold,
-      constrainToContainer: constrainToViewport,
+      snapToEdges: () => snapToEdges,
+      snapThreshold: () => snapThreshold,
+      constrain: () => constrainToViewport,
     },
     {
       onDragStart: (posX, posY) => emit('dragStart', { x: posX, y: posY }),
@@ -136,7 +132,6 @@
 
 <template>
   <div
-    :id
     ref="windowRef"
     class="window"
     :class="{ active, glass, draggable, dragging }"
@@ -145,18 +140,20 @@
   >
     <div
       ref="headerRef"
-      :class="family === 'mac' ? (active ? 'title-bar' : 'inactive-title-bar') : 'title-bar'"
+      :class="isMac && !active ? 'inactive-title-bar' : 'title-bar'"
       :style="titleBarStyle"
     >
       <!-- system.css title bar: close + h1.title + resize -->
-      <template v-if="family === 'mac'">
+      <template v-if="isMac">
         <button
           v-if="closable"
           aria-label="Close"
           class="close"
           @click.stop="emit('close')"
         />
-        <h1 class="title">{{ title }}</h1>
+        <h1 class="title">
+          {{ title }}
+        </h1>
         <button
           v-if="maximizable"
           aria-label="Resize"
@@ -166,7 +163,9 @@
       </template>
 
       <template v-else>
-        <div class="title-bar-text">{{ title }}</div>
+        <div class="title-bar-text">
+          {{ title }}
+        </div>
         <div class="title-bar-controls">
           <button
             v-if="minimizable"
@@ -188,12 +187,12 @@
     </div>
 
     <div
-      v-if="family === 'mac'"
+      v-if="isMac"
       class="separator"
     />
 
     <div
-      :class="family === 'mac'
+      :class="isMac
         ? 'window-pane'
         : ['window-body', 'has-space', { 'has-scrollbar': hasScrollbar }]"
       :style="{ width }"

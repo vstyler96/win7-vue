@@ -1,4 +1,4 @@
-import { createRouter, createWebHashHistory, createWebHistory } from 'vue-router'
+import { createRouter, createWebHashHistory } from 'vue-router'
 import { SECTIONS } from './catalog'
 import Installation from './sections/Installation.vue'
 import Requirements from './sections/Requirements.vue'
@@ -10,7 +10,7 @@ const views = { install: Installation, requirements: Requirements, themes: Theme
 // Hash history keeps the demo hostable as static files (GitHub Pages etc.) with no
 // server rewrites. Each section carries its title in meta for the window chrome.
 export const router = createRouter({
-  history: createWebHistory(),
+  history: createWebHashHistory(),
   routes: [
     { path: '/', redirect: SECTIONS[0].path },
     ...SECTIONS.map(s => ({

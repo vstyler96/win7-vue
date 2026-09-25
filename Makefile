@@ -3,8 +3,8 @@ init: help
 build: ## Build the project
 	@npm run build
 
-preview: ## Preview the project
-	@npm run preview
+lint: ## Lint the project
+	@npm run lint
 
 publish: build ## Build then publish the package to npm
 	@npm publish --access public

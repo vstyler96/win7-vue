@@ -11,6 +11,7 @@
     icon,
     size = 24,
   } = defineProps<{
+    /** Built-in icon name, or a raw 24x24 SVG path. */
     icon: string
     size?: string | number
   }>()
@@ -25,7 +26,7 @@
       :height="`${size}px`"
     >
       <path
-        :d="icons[icon]"
+        :d="icons[icon] ?? icon"
         fill="currentColor"
       />
     </svg>

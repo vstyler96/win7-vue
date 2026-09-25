@@ -15,22 +15,23 @@
 
   const model = defineModel<string | number | null>({ default: null })
 
+  // DOM values are strings; map back to the option's own value so numeric ids stay numbers.
   function onChange(event: Event) {
-    model.value = (event.target as HTMLSelectElement).value
+    const raw = (event.target as HTMLSelectElement).value
+    model.value = options.find(o => String(o[itemValue]) === raw)?.[itemValue] ?? raw
   }
 </script>
 
 <template>
   <select
-    :value="model"
+    :value="model ?? ''"
     @change="onChange"
   >
     <slot name="placeholder">
       <option
         v-if="placeholder"
         disabled
-        selected
-        :value="undefined"
+        value=""
       >
         {{ placeholder }}
       </option>
@@ -41,7 +42,6 @@
         v-for="option in options"
         :key="option[itemValue]"
         :disabled="option.disabled"
-        :selected="model === option[itemValue]"
         :value="option[itemValue]"
       >
         {{ option[itemTitle] }}

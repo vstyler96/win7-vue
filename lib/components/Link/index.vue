@@ -1,28 +1,24 @@
 <script setup lang="ts">
   import WinIcon from '../Icon/index.vue'
+  import { useLinkTag } from '../../composables/link'
 
   defineOptions({ name: 'WinLink' })
 
-  const {
-    prependIcon = undefined,
-    href = undefined,
-    text = undefined,
-    to = undefined,
-    target = undefined,
-  } = defineProps<{
+  const props = defineProps<{
     prependIcon?: string
     href?: string
     text?: string
     to?: string | object
     target?: string
   }>()
+
+  const tag = useLinkTag(() => props)
 </script>
 
 <template>
   <component
-    :is="to ? 'router-link' : href ? 'a' : 'button'"
-    :href
-    :to
+    :is="tag.is"
+    v-bind="tag.attrs"
     :target
   >
     <WinIcon

@@ -22,7 +22,8 @@ import css7 from '7.css/dist/7.css?url'
 import cssSystem from '@sakun/system.css/dist/system.css?url'
 
 createApp(App)
-  .use(win7vue) // registers <Window>, <Button>, … globally
+  .use(win7vue) // registers <WinWindow>, <WinButton>, … globally
+  // or .use(win7vue, { prefix: 'Xp' }) for <XpWindow>, <XpButton>, …
   .use(createWinTheme({
     defaultTheme: 'win7',
     themes: {
@@ -34,6 +35,19 @@ createApp(App)
   }))
   .mount('#app')`
 
+  const globalTypes = `// tsconfig.json — typed <WinX> components in templates
+{
+  "compilerOptions": { "types": ["win7-vue/global"] }
+}
+
+// Custom prefix? Declare the map yourself instead:
+// components.d.ts
+import type { Win7VueComponents } from 'win7-vue'
+declare module 'vue' {
+  interface GlobalComponents extends Win7VueComponents<'Xp'> {}
+}`
+
+  /* eslint-disable no-useless-escape -- a literal close tag would end this SFC block */
   const localImport = `<script setup lang="ts">
   // Prefer explicit imports? Skip .use(win7vue) and import per component.
   import { Window, Button, useTheme } from 'win7-vue'
@@ -47,6 +61,7 @@ createApp(App)
     <Button @click="theme.change('win98')">Switch to 98</Button>
   </Window>
 </template>`
+  /* eslint-enable no-useless-escape */
 </script>
 
 <template>
@@ -55,26 +70,61 @@ createApp(App)
     <p>
       <strong>win7-vue</strong> is an agnostic Vue 3 component library that renders the
       <em>real</em> markup of the classic Windows CSS frameworks
-      (<a href="https://github.com/jdan/98.css">98.css</a>,
-      <a href="https://github.com/botoxparty/XP.css">XP.css</a>,
-      <a href="https://github.com/khang-nd/7.css">7.css</a>) plus
-      <a href="https://github.com/sakofchit/system.css">system.css</a> for Mac OS. It ships
+      (<a href="https://github.com/vstyler96/98.css">98.css</a>,
+      <a href="https://github.com/vstyler96/xp.css">XP.css</a>,
+      <a href="https://github.com/vstyler96/7.css">7.css</a>) plus
+      <a href="https://github.com/vstyler96/system.css">system.css</a> for Mac OS. It ships
       <strong>zero CSS of its own</strong> — the look comes entirely from the active upstream
       stylesheet, which you swap at runtime.
     </p>
+    <p>
+      Those links are our forks, which will fully support every win7-vue component in the
+      future. The official projects work too:
+      <a href="https://github.com/jdan/98.css">jdan/98.css</a>,
+      <a href="https://github.com/botoxparty/XP.css">botoxparty/XP.css</a>,
+      <a href="https://github.com/khang-nd/7.css">khang-nd/7.css</a> and
+      <a href="https://github.com/sakofchit/system.css">sakofchit/system.css</a>.
+      The support table under Components shows what each one styles.
+    </p>
 
     <h3>1. Install</h3>
-    <CodePreview :code="install" language="bash" title="Install" open />
+    <CodePreview
+      :code="install"
+      language="bash"
+      title="Install"
+      open
+    />
 
     <h3>2. Configure your app</h3>
     <p>Register the plugin and the theme engine in your entry file:</p>
-    <CodePreview :code="mainTs" language="typescript" title="src/main.ts" open />
+    <CodePreview
+      :code="mainTs"
+      language="typescript"
+      title="src/main.ts"
+      open
+    />
 
     <h3>3. Use the components</h3>
     <p>
-      With <code>.use(win7vue)</code> every component is global. Or import only what you
-      need — the library is tree-shakeable:
+      With <code>.use(win7vue)</code> every component is global under a <code>Win</code>
+      prefix (<code>&lt;WinWindow&gt;</code>, <code>&lt;WinButton&gt;</code>…), so one-word
+      names never clash with native elements like <code>&lt;dialog&gt;</code>. Pass
+      <code>{ prefix: 'Xp' }</code> to pick your own. For TypeScript, enable the global
+      component types:
     </p>
-    <CodePreview :code="localImport" language="vue" title="A component" open />
+    <CodePreview
+      :code="globalTypes"
+      language="typescript"
+      title="Global component types"
+      open
+    />
+
+    <p>Or import only what you need — the library is tree-shakeable:</p>
+    <CodePreview
+      :code="localImport"
+      language="vue"
+      title="A component"
+      open
+    />
   </section>
 </template>

@@ -25,7 +25,7 @@
   })
 
   watch(results, () => { active.value = 0 })
-  watch(open, async (isOpen) => {
+  watch(open, async isOpen => {
     if (!isOpen) return
     query.value = ''
     active.value = 0
@@ -48,7 +48,11 @@
 </script>
 
 <template>
-  <div v-if="open" class="palette-overlay" @click="open = false">
+  <div
+    v-if="open"
+    class="palette-overlay"
+    @click="open = false"
+  >
     <div class="palette" @click.stop>
       <input
         ref="inputEl"
@@ -69,9 +73,13 @@
           <span class="palette-label">{{ entry.label }}</span>
           <span v-if="entry.hint" class="palette-hint">{{ entry.hint }}</span>
         </li>
-        <li v-if="!results.length" class="palette-empty">No matches</li>
+        <li v-if="!results.length" class="palette-empty">
+          No matches
+        </li>
       </ul>
-      <div class="palette-footer">↑↓ navigate · ↵ open · esc close</div>
+      <div class="palette-footer">
+        ↑↓ navigate · ↵ open · esc close
+      </div>
     </div>
   </div>
 </template>
