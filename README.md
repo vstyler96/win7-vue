@@ -13,9 +13,17 @@ the real markup of [98.css](https://github.com/vstyler96/98.css),
 
 ### Theme providers
 
-Any stylesheet that follows the upstream markup works. We maintain our own forks, which
-will **fully support every win7-vue component** in the future. The official projects work
-too. The [support column](#-components) shows which components they style.
+Any stylesheet that follows the upstream markup works. We maintain our own forks, published
+on npm under `@vstyler96/*`: they share one markup and **style every win7-vue component**.
+The official projects work too, with fewer components styled.
+
+| Package | Status |
+|---|---|
+| [`@vstyler96/xp.css`](https://www.npmjs.com/package/@vstyler96/xp.css) | ✅ 2.x |
+| [`@vstyler96/7.css`](https://www.npmjs.com/package/@vstyler96/7.css) | ✅ 2.x |
+| [`@vstyler96/system.css`](https://www.npmjs.com/package/@vstyler96/system.css) | ✅ 2.x |
+| [`@vstyler96/x.css`](https://www.npmjs.com/package/@vstyler96/x.css) | ✅ 2.x |
+| [`@vstyler96/98.css`](https://www.npmjs.com/package/@vstyler96/98.css) | ✅ 2.x |
 
 | Theme | Our fork (recommended) | Official upstream |
 |---|---|---|
@@ -28,7 +36,7 @@ too. The [support column](#-components) shows which components they style.
 ## 🚀 Quick start
 
 ```sh
-npm i win7-vue 7.css        # pick your upstream: 7.css, xp.css, 98.css, @sakun/system.css and/or @vstyler96/x.css
+npm i win7-vue @vstyler96/7.css   # pick your themes: @vstyler96/98.css, @vstyler96/xp.css, @vstyler96/7.css, @vstyler96/system.css, @vstyler96/x.css
 ```
 
 ```js
@@ -62,7 +70,7 @@ declare module "vue" {
 | Package | Version | |
 |---|---|---|
 | `vue` | `^3.5` | required |
-| `7.css` / `98.css` / `xp.css` / `@sakun/system.css` / `@vstyler96/x.css` | see `peerDependencies` | optional, install the themes you ship |
+| `@vstyler96/98.css` / `@vstyler96/xp.css` / `@vstyler96/7.css` / `@vstyler96/system.css` / `@vstyler96/x.css` | see `peerDependencies` | optional, install the themes you ship |
 | `vue-router` | `>=4` | optional, only for the `to` prop on Button / Link |
 
 Theme stylesheets are loaded with `?url` imports, so you need a bundler that supports them
@@ -74,10 +82,10 @@ Themes are whole upstream stylesheets, swapped at runtime:
 
 ```js
 import { createWinTheme } from "win7-vue";
-import css98 from "98.css/dist/98.css?url";
-import cssXP from "xp.css/dist/XP.css?url";
-import css7 from "7.css/dist/7.css?url";
-import cssMac from "@sakun/system.css/dist/system.css?url";
+import css98 from "@vstyler96/98.css/dist/98.css?url";
+import cssXP from "@vstyler96/xp.css/dist/XP.css?url";
+import css7 from "@vstyler96/7.css/dist/7.css?url";
+import cssMac from "@vstyler96/system.css/dist/system.css?url";
 import cssX from "@vstyler96/x.css/dist/x.css?url";
 
 app.use(createWinTheme({
@@ -86,8 +94,8 @@ app.use(createWinTheme({
     win98: css98,
     winxp: cssXP,
     win7: css7,
-    macos: { url: cssMac, family: "mac" }, // system.css uses different markup
-    osx: { url: cssX, family: "mac" }, // X.css shares system.css markup
+    macos: cssMac, // the @vstyler96 forks all share one markup
+    osx: cssX,
   },
 }));
 ```
@@ -101,19 +109,20 @@ theme.change("winxp");   // theme.name, theme.family, theme.themes
 ```
 
 The active theme name is mirrored to `<html data-win-theme="...">` for your own CSS hooks.
-Register extra stylesheets at runtime with `theme.add(name, { url, family })`.
+Register extra stylesheets at runtime with `theme.add(name, { url, family })`. `family: "mac"`
+is only for the legacy `@sakun/system.css` 0.x / `@vstyler96/x.css` 1.x markup; every 2.x
+fork uses the default `"windows"` markup.
 
 ## 🧩 Components
 
 Global names are shown with the default `Win` prefix; local imports drop it
-(`import { Window } from "win7-vue"`). Support shows which themes ship dedicated CSS for
-the markup in the official stylesheets. Elsewhere the component still works and falls back
-to browser defaults. Our forks are closing these gaps. `mac` is system.css and `X` is X.css;
-both use the `mac` markup family.
+(`import { Window } from "win7-vue"`). Support shows which themes ship dedicated CSS for the
+markup with the packages above (`@vstyler96/*` 2.x). Elsewhere the
+component still works and falls back to browser defaults. `mac` is system.css and `X` is X.css.
 
-> 🚧 **Work in progress:** the TaskBar & Start menu components are new and no stylesheet
-> styles them yet. We're adding their styles to every vstyler96 fork (98.css, XP.css,
-> 7.css, system.css and X.css). Until then they work but render unstyled. See
+> 🚧 **Work in progress:** the forks style the taskbar row and the start button so far; the
+> taskbar chrome and the Start menu are still being styled. Until then those parts work but
+> render unstyled. See
 > [Taskbar & Start menu](#taskbar--start-menu) for the markup contract.
 
 | Component | Renders | Key props / `v-model` | Events | Support |
@@ -126,21 +135,23 @@ both use the `mac` markup family.
 | `<WinCheckbox>` | checkbox + label | `v-model` (boolean or array), `label`, `value`, `true-value`, `false-value`, `name`, `disabled` | — | all |
 | `<WinRadio>` | radio + label | `v-model`, `value`, `name`, `label`, `disabled` | — | all |
 | `<WinDropdown>` | `<select>` | `v-model`, `options`, `item-value`, `item-title`, `placeholder` · slots: `placeholder`, `options` | — | all |
-| `<WinListbox>` | `ul[role=listbox]` | `v-model`, `options`, `item-value`, `item-text` | — | 7 (X.css port TODO) |
-| `<WinSlider>` | `<input type=range>` | `v-model`, native `min` / `max` / `step` | native | 98 · XP · 7 |
-| `<WinProgress>` | `[role=progressbar]` | `progress` (0–100 or `"40%"`), `indeterminate`, `animate`, `variant` (`error`, `paused`), `transition` | — | 7 |
-| `<WinGroupbox>` | `<fieldset>` + `<legend>` | `title` | — | 98 · XP · 7 |
-| `<WinCollapse>` | `<details>` | `v-model:open`, `title`, `prepend-icon`, `children` (nested tree) · slots: `title`, default | — | 7 |
+| `<WinListbox>` | `ul[role=listbox]` | `v-model`, `options`, `item-value`, `item-text` | — | all |
+| `<WinSlider>` | `<input type=range>` | `v-model`, native `min` / `max` / `step` | native | all |
+| `<WinProgress>` | `[role=progressbar]` | `progress` (0–100 or `"40%"`), `indeterminate`, `animate`, `variant` (`error`, `paused`), `transition` | — | all |
+| `<WinGroupbox>` | `<fieldset>` + `<legend>` | `title` | — | all |
+| `<WinCircularProgress>` | `span.spinner` (`.animate`) | `animate` (default true), `label` | — | all |
+| `<WinCollapse>` | `<details>` | `v-model:open`, `title`, `prepend-icon`, `children` (nested tree) · slots: `title`, default | — | all |
 | `<WinIcon>` | inline SVG | `icon` (built-in name or raw 24×24 path), `size` | — | all |
-| `<WinTabs>` | `menu[role=tablist]` + panels | `v-model` (active key), `tabs` (`{ key: title }`), `justified` · one slot per key | — | XP · 7 |
-| `<WinTreeview>` | `ul.tree-view` | slot: `<li>` / `<details>` items | — | 98 · XP · 7 |
-| `<WinMenuBar>` | `[role=menubar]` | `can-hover` | — | 7 · mac · X |
-| `<WinMenu>` | `ul[role=menu]` | `can-hover` | — | 7 · mac · X |
-| `<WinMenuItem>` | `[role=menuitem]` | `option` (`{ as: "checkbox" \| "radio", id, name? }`), `value`, `v-model` · slots: default, `submenu` | — | 7 · mac · X |
-| `<WinSearchbox>` | `.searchbox` | `v-model`, `placeholder`, `instant` | `search` | 7 |
-| `<WinBalloon>` | `[role=tooltip]` | `caption`, `top`, `bottom`, `left`, `right` | — | 7 |
-| `<WinTaskBar>` | `.taskbar` | `clock`, `show-desktop` · slots: `start`, default (app buttons), `tray` | `show-desktop` | 🚧 in progress |
-| `<WinStartButton>` | `button.start-button` | `v-model:open` (shared with StartMenu), `label` · slot: default | native | 🚧 in progress |
+| `<WinTable>` | `table` (listview) | `headers` (`{ key, title, center? }[]`), `items`, `item-key`, `striped`, `hover`, `full`, `shadow` · `#cell-<key>` slots | — | all |
+| `<WinTabs>` | `menu[role=tablist]` + panels | `v-model` (active key), `tabs` (`{ key: title }`), `justified` · one slot per key | — | all |
+| `<WinTreeview>` | `ul.tree-view` | slot: `<li>` / `<details>` items | — | all |
+| `<WinMenuBar>` | `[role=menubar]` | `can-hover` | — | all |
+| `<WinMenu>` | `ul[role=menu]` | `can-hover` | — | all |
+| `<WinMenuItem>` | `[role=menuitem]` | `option` (`{ as: "checkbox" \| "radio", id, name? }`), `value`, `v-model` · slots: default, `submenu` | — | all |
+| `<WinSearchbox>` | `.searchbox` | `v-model`, `placeholder`, `instant` | `search` | all |
+| `<WinBalloon>` | `[role=tooltip]` | `caption`, `top`, `bottom`, `left`, `right` | — | all |
+| `<WinTaskBar>` | `.taskbar` | `clock`, `show-desktop` · slots: `start`, default (app buttons), `tray` | `show-desktop` | 🚧 layout only (all) |
+| `<WinStartButton>` | `button.start-button` (`.is-<variant>`) | `v-model:open` (shared with StartMenu), `label`, `variant` (`'vista'` on 7.css) · slot: default | native | all (sprite per OS) |
 | `<WinStartMenu>` | `.start-menu` | `v-model:open` · slots: `items`, `starred-items`, `picture`, `main-action`, `actions-dropdown`, `actions-dropdown-items` · closes on Escape / outside click | `main-action` | 🚧 in progress |
 | `<WinStartMenuItem>` | `li.start-menu-item` | `text`, `icon`, `image`, `href`, `to` · slots: default, `icon` · closes the menu when chosen | `click` | 🚧 in progress |
 | `<WinStartMenuStarredItem>` | same as StartMenuItem, for `#starred-items` | same | `click` | 🚧 in progress |
@@ -149,9 +160,9 @@ both use the `mac` markup family.
 
 ### Taskbar & Start menu
 
-No stylesheet styles a taskbar yet, so win7-vue defines this markup and the
-[vstyler96 forks](#theme-providers) will style it. With the official stylesheets these
-components work but render unstyled. Share one `open` ref between the button and the menu:
+win7-vue defines this markup and the [vstyler96 forks](#theme-providers) style it: the
+taskbar row and the start button today, the rest is in progress. With the official
+stylesheets these components work but render unstyled. Share one `open` ref between the button and the menu:
 
 ```vue
 <WinStartMenu v-model:open="open">
@@ -225,7 +236,31 @@ const { x, y, zIndex } = useDraggable(el, handle, { snapToEdges: true });
 
 **Exported types:** `Win7VueOptions`, `Win7VueComponents`, `DismissOptions`, `ThemeOptions`,
 `ThemeInstance`, `ThemeDefinition`, `ThemeFamily`, `DraggableOptions`, `DraggableEvents`,
-`CollapseChild`, `MenuItemOption`.
+`CollapseChild`, `MenuItemOption`, `TableHeader`.
+
+## 🔁 Migrating from 2.x
+
+**3.0.0** moves win7-vue to the [`@vstyler96/*` forks](#theme-providers). The component API is
+unchanged (only additions); the breaking part is the theme packages:
+
+- **New theme packages.** The optional peers are now `@vstyler96/98.css`, `@vstyler96/xp.css`,
+  `@vstyler96/7.css`, `@vstyler96/system.css` and `@vstyler96/x.css` (all `^2.0.0`), replacing
+  `98.css`, `xp.css`, `7.css` and `@sakun/system.css`.
+  ```sh
+  npm rm 98.css 7.css xp.css @sakun/system.css
+  npm i @vstyler96/98.css @vstyler96/xp.css @vstyler96/7.css @vstyler96/system.css @vstyler96/x.css
+  ```
+  Then update your `?url` imports, e.g. `"7.css/dist/7.css?url"` →
+  `"@vstyler96/7.css/dist/7.css?url"`.
+- **`@vstyler96/x.css` 1.x is no longer accepted** (`^2.0.0`): with npm 7+ an old copy makes the
+  install fail with a peer conflict, so upgrade it alongside win7-vue.
+- **Drop `family: "mac"`** for system.css and X.css 2.x: every fork now shares one markup, so
+  register them as plain URLs (`macos: cssMac`). Keep `family: "mac"` only if you stay on the
+  legacy `@sakun/system.css` 0.x or `@vstyler96/x.css` 1.x stylesheets.
+
+**New in 3.0.0:** `<WinTable>` (listview table with striped / hover / full-width / centered
+columns), `<WinCircularProgress>` (spinner), the `variant` prop on `<WinStartButton>`
+(`"vista"` on 7.css), and taskbar + start button styles in every published fork.
 
 ## 🚚 Roadmap
 1. [x] Improve Typescript implementation.
@@ -235,8 +270,10 @@ const { x, y, zIndex } = useDraggable(el, handle, { snapToEdges: true });
 5. [x] Add RouterLink support.
 6. [x] Configurable global prefix and typed global components.
 7. [x] TaskBar & Start menu components (markup contract).
-8. [ ] TaskBar & Start menu styles in the vstyler96 forks.
-9. [ ] Add custom Icons (Icons in progress).
+8. [x] One shared markup across the forks, published on npm as `@vstyler96/*` 2.x.
+9. [x] Table and CircularProgress components.
+10. [ ] TaskBar & Start menu styles in the vstyler96 forks (taskbar row and start button done).
+11. [ ] Add custom Icons (Icons in progress).
 
 ## 📚 Documentation
 

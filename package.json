@@ -1,15 +1,16 @@
 {
   "name": "win7-vue",
-  "version": "2.1.0",
+  "version": "3.0.0",
   "main": "dist/win7-vue.js",
   "devDependencies": {
-    "7.css": "^0.17.0",
-    "98.css": "^0.1.20",
     "@eslint/js": "^10.0.1",
-    "@sakun/system.css": "^0.1.11",
-    "@vstyler96/x.css": "^1.0.0",
     "@types/node": "^24.10.9",
     "@vitejs/plugin-vue": "^6.0.3",
+    "@vstyler96/7.css": "^2.0.0",
+    "@vstyler96/98.css": "^2.0.0",
+    "@vstyler96/system.css": "^2.0.0",
+    "@vstyler96/x.css": "^2.0.0",
+    "@vstyler96/xp.css": "^2.0.0",
     "@vue/tsconfig": "^0.7.0",
     "eslint": "^10.11.0",
     "eslint-plugin-vue": "^10.11.1",
@@ -21,16 +22,15 @@
     "vite-plugin-dts": "^4.5.4",
     "vue": "^3.5.27",
     "vue-router": "^5.3.1",
-    "vue-tsc": "^3.2.4",
-    "xp.css": "^0.2.6"
+    "vue-tsc": "^3.2.4"
   },
   "peerDependencies": {
-    "7.css": "^0.17.0",
-    "98.css": ">=0.1.0",
-    "@sakun/system.css": ">=0.1.0",
-    "@vstyler96/x.css": ">=1.0.0",
+    "@vstyler96/7.css": "^2.0.0",
+    "@vstyler96/98.css": "^2.0.0",
+    "@vstyler96/system.css": "^2.0.0",
+    "@vstyler96/x.css": "^2.0.0",
+    "@vstyler96/xp.css": "^2.0.0",
     "vue": "^3.5.18",
-    "xp.css": ">=0.2.0",
     "vue-router": ">=4.0.0"
   },
   "exports": {
@@ -74,19 +74,19 @@
     "x.css"
   ],
   "peerDependenciesMeta": {
-    "7.css": {
+    "@vstyler96/7.css": {
       "optional": true
     },
-    "98.css": {
+    "@vstyler96/98.css": {
       "optional": true
     },
-    "@sakun/system.css": {
+    "@vstyler96/system.css": {
       "optional": true
     },
     "@vstyler96/x.css": {
       "optional": true
     },
-    "xp.css": {
+    "@vstyler96/xp.css": {
       "optional": true
     },
     "vue-router": {
@@ -96,6 +96,7 @@
   "private": false,
   "scripts": {
     "dev": "vite --config vite.config.demo.ts",
+    "dev:forks": "vite --config vite.config.demo.ts --mode forks",
     "build": "vue-tsc -b ./tsconfig.lib.json && vite build",
     "prepublishOnly": "npm run build",
     "build:demo": "vite build --config vite.config.demo.ts",

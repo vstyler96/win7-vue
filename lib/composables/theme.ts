@@ -2,14 +2,15 @@ import { computed, inject, readonly, ref } from 'vue'
 import type { App, ComputedRef, InjectionKey, Ref } from 'vue'
 
 /**
- * Markup family of an upstream framework. The Windows family (98.css, XP.css,
- * 7.css) shares one markup contract; 'mac' covers system.css (button.btn,
- * h1.title title bars, .window-pane, role="menu-bar"…).
+ * Markup family of an upstream framework. 'windows' is the shared markup contract of 98.css,
+ * XP.css, 7.css and every @vstyler96 2.x fork (system.css and x.css included); 'mac' is the
+ * legacy @sakun/system.css 0.x / @vstyler96/x.css 1.x markup (button.btn, h1.title title bars,
+ * .window-pane, role="menu-bar"…).
  */
 export type ThemeFamily = 'windows' | 'mac';
 
 export interface ThemeDefinition {
-  /** Stylesheet URL (e.g. `import url from '7.css/dist/7.css?url'`). */
+  /** Stylesheet URL (e.g. `import url from '@vstyler96/7.css/dist/7.css?url'`). */
   url: string;
   /** Markup family the stylesheet targets. Defaults to 'windows'. */
   family?: ThemeFamily;

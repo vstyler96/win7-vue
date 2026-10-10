@@ -1,36 +1,38 @@
 <script setup lang="ts">
-  import { computed, nextTick, ref, watch } from 'vue'
-  import { Button, Dialog, Searchbox } from 'win7-vue'
+  // Ctrl/⌘+K search, part of the docs shell: a native <dialog> styled by docs.css, so it
+  // looks the same under every theme. showModal() gives Escape, focus trapping and ::backdrop.
+  import { computed, nextTick, ref, useTemplateRef, watch } from 'vue'
 
   export interface PaletteEntry {
     label: string
     hint?: string
     path: string
-    anchor?: string
+    hash?: string
   }
 
   const open = defineModel<boolean>({ required: true })
   const { entries } = defineProps<{ entries: PaletteEntry[] }>()
   const emit = defineEmits<{ select: [entry: PaletteEntry] }>()
 
+  const dialog = useTemplateRef<HTMLDialogElement>('dialog')
+  const input = useTemplateRef<HTMLInputElement>('input')
   const query = ref('')
   const active = ref(0)
-  const search = ref<{ $el: HTMLInputElement }>()
 
   const results = computed(() => {
     const q = query.value.trim().toLowerCase()
     if (!q) return entries
-    return entries.filter(e =>
-      (e.label + ' ' + (e.hint ?? '') + ' ' + e.path).toLowerCase().includes(q),
-    )
+    return entries.filter(e => `${e.label} ${e.hint ?? ''} ${e.path}`.toLowerCase().includes(q))
   })
   watch(results, () => { active.value = 0 })
+
   watch(open, async isOpen => {
-    if (!isOpen) return
+    if (!isOpen) return dialog.value?.close()
     query.value = ''
     active.value = 0
+    dialog.value?.showModal()
     await nextTick()
-    search.value?.$el.focus()
+    input.value?.focus()
   })
 
   function choose(entry?: PaletteEntry) {
@@ -39,7 +41,6 @@
     open.value = false
   }
 
-  // Escape is handled by the Dialog.
   function onKeydown(e: KeyboardEvent) {
     if (e.key === 'ArrowDown') { e.preventDefault(); active.value = Math.min(active.value + 1, results.value.length - 1) }
     else if (e.key === 'ArrowUp') { e.preventDefault(); active.value = Math.max(active.value - 1, 0) }
@@ -48,34 +49,44 @@
 </script>
 
 <template>
-  <Dialog
-    v-model="open"
-    title="Search"
-    width="480px"
-    :show-actions="false"
-    closable
+  <!-- Clicking the backdrop hits the <dialog> itself. -->
+  <dialog
+    ref="dialog"
+    class="docs-palette"
+    aria-label="Search"
+    @close="open = false"
+    @click="$event.target === dialog && (open = false)"
   >
-    <Searchbox
-      ref="search"
+    <input
+      ref="input"
       v-model="query"
-      instant
+      type="search"
       placeholder="Search sections and components…"
       @keydown="onKeydown"
-    />
-    <!-- TODO: back to <Listbox> once every theme styles it; only 7.css does today. -->
-    <template v-if="results.length">
-      <div
+    >
+    <ul v-if="results.length">
+      <li
         v-for="(entry, i) in results"
         :key="entry.label + entry.path"
       >
-        <Button @click="choose(entry)">
-          {{ i === active ? '▶ ' : '' }}{{ entry.label }}{{ entry.hint ? ` — ${entry.hint}` : '' }}
-        </Button>
-      </div>
-    </template>
-    <p v-else>
+        <button
+          class="docs-btn"
+          :class="{ 'is-active': i === active }"
+          @mouseenter="active = i"
+          @click="choose(entry)"
+        >
+          {{ entry.label }} <small>{{ entry.hint }}</small>
+        </button>
+      </li>
+    </ul>
+    <p
+      v-else
+      class="docs-palette-empty"
+    >
       No matches
     </p>
-    <p>↑↓ navigate · ↵ open · esc close</p>
-  </Dialog>
+    <p class="docs-palette-foot">
+      ↑↓ navigate · ↵ open · esc close
+    </p>
+  </dialog>
 </template>

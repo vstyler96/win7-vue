@@ -7,7 +7,7 @@ npm install win7-vue
 pnpm add win7-vue
 
 # plus at least one upstream theme stylesheet (optional peers)
-bun add 7.css 98.css xp.css @sakun/system.css @vstyler96/x.css`
+bun add @vstyler96/98.css @vstyler96/xp.css @vstyler96/7.css @vstyler96/system.css @vstyler96/x.css`
 
   const mainTs = `// src/main.ts — wire the library into your app
 import { createApp } from 'vue'
@@ -16,10 +16,10 @@ import win7vue, { createWinTheme } from 'win7-vue'
 
 // Themes are whole upstream stylesheets, swapped at runtime.
 // Import each as a URL so the theme plugin can hot-swap the <link>.
-import css98 from '98.css/dist/98.css?url'
-import cssXP from 'xp.css/dist/XP.css?url'
-import css7 from '7.css/dist/7.css?url'
-import cssSystem from '@sakun/system.css/dist/system.css?url'
+import css98 from '@vstyler96/98.css/dist/98.css?url'
+import cssXP from '@vstyler96/xp.css/dist/XP.css?url'
+import css7 from '@vstyler96/7.css/dist/7.css?url'
+import cssSystem from '@vstyler96/system.css/dist/system.css?url'
 import cssX from '@vstyler96/x.css/dist/x.css?url'
 
 createApp(App)
@@ -31,8 +31,8 @@ createApp(App)
       win98: css98,
       winxp: cssXP,
       win7: css7,
-      macos: { url: cssSystem, family: 'mac' },
-      osx: { url: cssX, family: 'mac' }, // X.css reuses system.css markup
+      macos: cssSystem,
+      osx: cssX, // every @vstyler96 fork shares one markup
     },
   }))
   .mount('#app')`
@@ -68,8 +68,8 @@ declare module 'vue' {
 
 <template>
   <section>
-    <h2>Installation</h2>
-    <p>
+    <h1>Installation</h1>
+    <p class="docs-lead">
       <strong>win7-vue</strong> is an agnostic Vue 3 component library that renders the
       <em>real</em> markup of the classic Windows CSS frameworks
       (<a href="https://github.com/vstyler96/98.css">98.css</a>,
@@ -81,31 +81,35 @@ declare module 'vue' {
       stylesheet, which you swap at runtime.
     </p>
     <p>
-      Those links are our forks, which will fully support every win7-vue component in the
-      future. The official projects work too; see
+      Those links are our forks, published on npm as <code>@vstyler96/*</code>; they style every
+      win7-vue component. The official projects work too; see
       <RouterLink to="/requirements">
         Requirements → Theme providers
       </RouterLink>.
     </p>
 
-    <h3>1. Install</h3>
+    <h2 id="install">
+      1. Install
+    </h2>
     <CodePreview
       :code="install"
       language="bash"
       title="Install"
-      open
     />
 
-    <h3>2. Configure your app</h3>
+    <h2 id="configure">
+      2. Configure your app
+    </h2>
     <p>Register the plugin and the theme engine in your entry file:</p>
     <CodePreview
       :code="mainTs"
       language="typescript"
       title="src/main.ts"
-      open
     />
 
-    <h3>3. Use the components</h3>
+    <h2 id="use">
+      3. Use the components
+    </h2>
     <p>
       With <code>.use(win7vue)</code> every component is global under a <code>Win</code>
       prefix (<code>&lt;WinWindow&gt;</code>, <code>&lt;WinButton&gt;</code>…), so one-word
@@ -117,7 +121,6 @@ declare module 'vue' {
       :code="globalTypes"
       language="typescript"
       title="Global component types"
-      open
     />
 
     <p>Or import only what you need — the library is tree-shakeable:</p>
@@ -125,7 +128,6 @@ declare module 'vue' {
       :code="localImport"
       language="vue"
       title="A component"
-      open
     />
   </section>
 </template>

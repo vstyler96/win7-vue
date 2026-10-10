@@ -33,3 +33,4 @@ export { createWinTheme, useTheme, useThemeFamily, useIsMac, ThemeSymbol } from 
 export type { ThemeOptions, ThemeInstance, ThemeDefinition, ThemeFamily } from './composables/theme'
 export type { CollapseChild } from './components/Collapse/index.vue'
 export type { MenuItemOption } from './components/MenuItem/index.vue'
+export type { TableHeader } from './components/Table/index.vue'

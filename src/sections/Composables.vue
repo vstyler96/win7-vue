@@ -1,5 +1,4 @@
 <script setup lang="ts">
-  import { Groupbox } from 'win7-vue'
   import CodePreview from '../components/CodePreview.vue'
 
   const composables = [
@@ -11,8 +10,8 @@
       code: `app.use(createWinTheme({
   defaultTheme: 'win7',
   themes: {
-    win7: css7,                                // stylesheet URL
-    macos: { url: cssSystem, family: 'mac' }, // or a definition with a markup family
+    win7: css7,                                    // stylesheet URL
+    legacy: { url: cssSystem0, family: 'mac' },   // or a definition with a markup family
   },
 }))`,
     },
@@ -24,7 +23,7 @@
       code: `const theme = useTheme()
 
 theme.change('winxp')
-theme.add('aero-cdn', { url: 'https://unpkg.com/7.css/dist/7.css' })
+theme.add('aero-cdn', { url: 'https://unpkg.com/@vstyler96/7.css/dist/7.css' })
 console.log(theme.name.value, theme.themes.value)`,
     },
     {
@@ -70,28 +69,31 @@ const { x, y, zIndex } = useDraggable(el, handle, { snapToEdges: true }, {
 
 <template>
   <section>
-    <h2>Composables</h2>
-    <p>
+    <h1>Composables</h1>
+    <p class="docs-lead">
       Everything the components use internally is exported, so your own markup can share the
       same theme and behavior. All of them are imported from <code>'win7-vue'</code>.
     </p>
 
-    <Groupbox
+    <template
       v-for="c in composables"
       :key="c.name"
-      :title="c.name"
     >
+      <h2 :id="c.name.split(' ')[0]">
+        {{ c.name }}
+      </h2>
       <p><code>{{ c.signature }}</code> → {{ c.returns }}</p>
       <p>{{ c.desc }}</p>
       <CodePreview
         :code="c.code"
         language="typescript"
         title="Example"
-        open
       />
-    </Groupbox>
+    </template>
 
-    <h3>Exported types</h3>
+    <h2 id="types">
+      Exported types
+    </h2>
     <p>
       <template
         v-for="(t, i) in types"

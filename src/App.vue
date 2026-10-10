@@ -1,105 +1,185 @@
 <template>
-  <!-- ponytail: the one inline layout rule the demo needs; themes don't lay out windows -->
-  <div style="display: flex; flex-wrap: wrap; align-items: flex-start; gap: 8px">
-    <Window
-      title="win7-vue"
-      active
-      width="240px"
-      color="#8AFFFF"
-      closable
-    >
-      <p>
-        <strong>Classic Windows &amp; Mac OS UI for Vue 3.</strong>
-        This page is built with win7-vue components and styled only by the active theme.
-      </p>
-      <p>
-        <Button @click="paletteOpen = true">
-          🔍 Search ({{ modKey }}+K)
-        </Button>
-        <label>
-          Theme:
-          <Dropdown v-model="currentTheme" :options="themeOptions" />
-        </label>
-      </p>
-
-      <!-- TODO: back to <Listbox> once every theme styles it; only 7.css does today.
-           X.css has an equivalent list that isn't ported to win7-vue's markup yet. -->
-      <div>
-        <Button
-          v-for="s in SECTIONS"
-          :key="s.path"
-          :disabled="route.path === s.path"
-          style="display: block; width: 100%; margin: 1em auto;"
-          @click="router.push(s.path)"
+  <!-- Docs shell (src/docs.css): looks the same under every theme. Only demos are themed. -->
+  <div id="docs">
+    <header class="docs-navbar">
+      <button
+        class="docs-btn docs-menu-toggle"
+        aria-label="Toggle navigation"
+        :aria-expanded="menuOpen"
+        @click="menuOpen = !menuOpen"
+      >
+        ☰
+      </button>
+      <RouterLink
+        class="docs-brand"
+        to="/"
+      >
+        win7-vue <span class="docs-badge">v{{ pkg.version }}</span>
+      </RouterLink>
+      <nav class="docs-navlinks">
+        <RouterLink :to="SECTIONS[0].path">
+          Docs
+        </RouterLink>
+        <RouterLink to="/components">
+          Components
+        </RouterLink>
+        <RouterLink to="/preview">
+          Preview
+        </RouterLink>
+      </nav>
+      <span class="docs-spacer" />
+      <button
+        class="docs-btn docs-search"
+        @click="paletteOpen = true"
+      >
+        <span class="docs-search-label">🔍 Search…</span>
+        <kbd>{{ modKey }} K</kbd>
+      </button>
+      <label class="docs-theme">
+        <span class="docs-theme-label">Theme</span>
+        <select
+          v-model="currentTheme"
+          class="docs-select"
         >
-          {{ s.icon }} {{ s.title }}
-        </Button>
-      </div>
-    </Window>
+          <option
+            v-for="name in theme.themes.value"
+            :key="name"
+            :value="name"
+          >{{ themeLabel(name) }}</option>
+        </select>
+      </label>
+      <a
+        class="docs-github"
+        :href="pkg.homepage"
+      >GitHub</a>
+    </header>
 
-    <Window
-      :title="windowTitle"
-      active
-      style="max-width: 1200px; margin: 0 auto;"
-      has-scrollbar
-      closable
-      minimizable
-      maximizable
-      color="#8AFFFF"
-      has-status
-      :status-fields="['Welcome :3', 'Please leave a star in my GitHub']"
+    <div
+      class="docs-layout"
+      :class="{ 'has-toc': toc.length }"
     >
-      <RouterView />
-    </Window>
-  </div>
+      <aside
+        class="docs-sidebar"
+        :class="{ 'is-open': menuOpen }"
+        aria-label="Docs navigation"
+      >
+        <template
+          v-for="group in groups"
+          :key="group.title"
+        >
+          <strong class="docs-group">{{ group.title }}</strong>
+          <ul>
+            <li
+              v-for="s in group.sections"
+              :key="s.path"
+            >
+              <RouterLink :to="s.path">
+                {{ s.title }}
+              </RouterLink>
+            </li>
+          </ul>
+        </template>
+        <strong class="docs-group">Component list</strong>
+        <ul>
+          <li
+            v-for="c in COMPONENTS"
+            :key="c.id"
+          >
+            <!-- Hash links: the router scrolls to the matching <h2 id>. -->
+            <RouterLink
+              :to="{ path: '/components', hash: `#cmp-${c.id}` }"
+              :class="{ 'is-muted': !shownUnder(c, theme.name.value) }"
+              active-class=""
+              exact-active-class=""
+            >
+              {{ c.name }}
+            </RouterLink>
+          </li>
+        </ul>
+      </aside>
 
-  <CommandPalette
-    v-model="paletteOpen"
-    :entries="entries"
-    @select="onSelect"
-  />
+      <main class="docs-main">
+        <RouterView />
+      </main>
+
+      <nav
+        v-if="toc.length"
+        class="docs-toc"
+        aria-label="On this page"
+      >
+        <p class="docs-toc-title">
+          On this page
+        </p>
+        <ul>
+          <li
+            v-for="h in toc"
+            :key="h.id"
+          >
+            <RouterLink :to="{ hash: `#${h.id}` }">
+              {{ h.text }}
+            </RouterLink>
+          </li>
+        </ul>
+      </nav>
+    </div>
+
+    <CommandPalette
+      v-model="paletteOpen"
+      :entries="entries"
+      @select="onSelect"
+    />
+  </div>
 </template>
 
 <script setup lang="ts">
-  import { computed, onMounted, onUnmounted, nextTick, ref, watchEffect } from 'vue'
+  import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue'
   import { useRoute, useRouter } from 'vue-router'
-  import { Button, Dropdown, Window, useTheme } from 'win7-vue'
+  import { useTheme } from 'win7-vue'
+  import pkg from '../package.json'
   import CommandPalette, { type PaletteEntry } from './components/CommandPalette.vue'
-  import { COMPONENTS, SECTIONS, scrollToAnchor, shownUnder, themeBackground, themeLabel, themeShort } from './catalog'
+  import { COMPONENTS, SECTIONS, shownUnder, themeLabel, themeShort } from './catalog'
 
   const route = useRoute()
   const router = useRouter()
-
   const theme = useTheme()
-  const themeOptions = computed(() =>
-    theme.themes.value.map(name => ({ id: name, name: themeLabel(name) })),
-  )
-  const currentTheme = computed<string | number | null>({
-    get: () => theme.name.value,
-    set: value => theme.change(String(value)),
-  })
-  // '' clears the inline value so Mac stylesheets' own body background shows.
-  watchEffect(() => { document.body.style.background = themeBackground(theme.name.value) })
 
-  const windowTitle = computed(() => (route.meta.title as string | undefined) ?? 'win7-vue')
+  const currentTheme = computed({
+    get: () => theme.name.value,
+    set: value => theme.change(value),
+  })
+
+  const groups = computed(() => [...new Set(SECTIONS.map(s => s.group))].map(title => ({
+    title,
+    sections: SECTIONS.filter(s => s.group === title),
+  })))
+
+  // "On this page": every <h2 id> the current page renders (re-read after route/theme changes,
+  // since the component list depends on the theme).
+  const toc = ref<{ id: string, text: string }[]>([])
+  watch([() => route.path, theme.name], async () => {
+    await nextTick()
+    toc.value = [...document.querySelectorAll<HTMLElement>('.docs-main h2[id]')]
+      .map(h => ({ id: h.id, text: h.textContent?.trim() ?? '' }))
+  }, { immediate: true, flush: 'post' })
+
+  const menuOpen = ref(false)
+  watch(() => route.fullPath, () => { menuOpen.value = false })
 
   const paletteOpen = ref(false)
   const modKey = /mac/i.test(navigator.userAgent) ? '⌘' : 'Ctrl'
 
   const entries = computed<PaletteEntry[]>(() => [
-    ...SECTIONS.map(s => ({ label: s.title, hint: 'section', path: s.path })),
+    ...SECTIONS.map(s => ({ label: s.title, hint: s.group, path: s.path })),
     ...COMPONENTS.filter(c => shownUnder(c, theme.name.value)).map(c => ({
       label: c.name,
       hint: c.themes.map(themeShort).join(' '),
       path: '/components',
-      anchor: `cmp-${c.id}`,
+      hash: `#cmp-${c.id}`,
     })),
   ])
 
-  async function onSelect(entry: PaletteEntry) {
-    if (route.path !== entry.path) await router.push(entry.path)
-    await nextTick()
-    if (entry.anchor) scrollToAnchor(entry.anchor)
+  function onSelect(entry: PaletteEntry) {
+    router.push({ path: entry.path, hash: entry.hash })
   }
 
   function onKeydown(e: KeyboardEvent) {

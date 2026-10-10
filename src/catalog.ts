@@ -3,18 +3,20 @@
 // Drives the theme plugin, the sidebar, the Ctrl+K palette and the support badges.
 
 import type { ThemeDefinition } from 'win7-vue'
-import css98 from '98.css/dist/98.css?url'
-import cssXP from 'xp.css/dist/XP.css?url'
-import css7 from '7.css/dist/7.css?url'
-import cssSystem from '@sakun/system.css/dist/system.css?url'
+// The published @vstyler96 forks. They all share one markup, so no theme needs family: 'mac'.
+import css98 from '@vstyler96/98.css/dist/98.css?url'
+import cssXP from '@vstyler96/xp.css/dist/XP.css?url'
+import css7 from '@vstyler96/7.css/dist/7.css?url'
+import cssSystem from '@vstyler96/system.css/dist/system.css?url'
 import cssX from '@vstyler96/x.css/dist/x.css?url'
+
 
 export const THEMES = [
   { key: 'win98', label: 'Windows 98', short: '98', theme: { url: css98 }, background: '#008080' },
   { key: 'winxp', label: 'Windows XP', short: 'XP', theme: { url: cssXP }, background: '#3a6ea5' },
   { key: 'win7', label: 'Windows 7', short: '7', theme: { url: css7 }, background: 'radial-gradient(circle at 50% 40%, #3aa0e0, #0b3a70) fixed' },
-  { key: 'macos', label: 'Mac OS (system.css)', short: 'mac', theme: { url: cssSystem, family: 'mac' } },
-  { key: 'osx', label: 'Mac OS X (X.css)', short: 'X', theme: { url: cssX, family: 'mac' } },
+  { key: 'macos', label: 'Mac OS (system.css)', short: 'mac', theme: { url: cssSystem }, background: 'repeating-conic-gradient(#7d7d7d 0 25%, #a8a8a8 0 50%) 0 0 / 4px 4px' },
+  { key: 'osx', label: 'Mac OS X (X.css)', short: 'X', theme: { url: cssX }, background: 'radial-gradient(ellipse at 50% 20%, #5b7fb8, #1f3159 75%) fixed' },
 ] as const satisfies readonly { key: string, label: string, short: string, theme: ThemeDefinition, background?: string }[]
 
 export type ThemeKey = typeof THEMES[number]['key']
@@ -25,28 +27,28 @@ export const themeShort = (key: string): string => find(key)?.short ?? key
 /** Whether a component's demo is shown under a theme. Work-in-progress entries (no theme yet) always show. */
 export const shownUnder = (c: ComponentMeta, key: string): boolean =>
   !c.themes.length || (c.themes as string[]).includes(key)
-/** Desktop background for Windows themes; Mac stylesheets set their own on body. */
-export const themeBackground = (key: string): string => {
-  const t = find(key)
-  return t && 'background' in t ? t.background : ''
-}
+/** Desktop wallpaper per theme (the 2.x forks no longer style body). */
+export const themeBackground = (key: string): string => find(key)?.background ?? ''
 
-export type SectionId = 'install' | 'requirements' | 'themes' | 'components' | 'composables'
+export type SectionId = 'install' | 'requirements' | 'themes' | 'components' | 'preview' | 'composables'
 
 export interface Section {
   id: SectionId
   title: string
   icon: string
+  /** Sidebar group heading. */
+  group: string
   /** Router path for this section. */
   path: string
 }
 
 export const SECTIONS: Section[] = [
-  { id: 'install', title: 'Installation', icon: '📦', path: '/installation' },
-  { id: 'requirements', title: 'Requirements', icon: '✅', path: '/requirements' },
-  { id: 'themes', title: 'Themes', icon: '🎨', path: '/themes' },
-  { id: 'components', title: 'Components', icon: '🧩', path: '/components' },
-  { id: 'composables', title: 'Composables', icon: '🪝', path: '/composables' },
+  { id: 'install', title: 'Installation', icon: '📦', group: 'Getting started', path: '/installation' },
+  { id: 'requirements', title: 'Requirements', icon: '✅', group: 'Getting started', path: '/requirements' },
+  { id: 'themes', title: 'Themes', icon: '🎨', group: 'Customize', path: '/themes' },
+  { id: 'components', title: 'Components', icon: '🧩', group: 'Components', path: '/components' },
+  { id: 'preview', title: 'Preview', icon: '🖥️', group: 'Components', path: '/preview' },
+  { id: 'composables', title: 'Composables', icon: '🪝', group: 'Customize', path: '/composables' },
 ]
 
 /** Stylesheet sources per theme: our forks (full component support coming) and the originals. */
@@ -59,7 +61,6 @@ export const PROVIDERS: { theme: string, fork: string, official: string }[] = [
 ]
 
 const ALL: ThemeKey[] = THEMES.map(t => t.key)
-const WINDOWS: ThemeKey[] = ['win98', 'winxp', 'win7']
 
 export interface ComponentMeta {
   /** anchor id (`cmp-<id>`) and example file name (`src/examples/<id>.vue`) */
@@ -111,7 +112,7 @@ export const COMPONENTS: ComponentMeta[] = [
   { id: 'window', name: 'Window', themes: ALL, desc: '.window / .title-bar chrome, draggable, min/max/close', api: [
     { tag: 'WinWindow', props: 'title, active, glass, width, color, closable, minimizable, maximizable, has-status, status-fields, has-scrollbar, draggable, default-x, default-y, snap-to-edges, snap-threshold, constrain-to-viewport · exposes setPosition(), center(), focus(), getPosition()', slots: 'default, status', events: 'close, minimize, maximize, focus, drag-start, drag-end, position-change' },
   ] },
-  { id: 'button', name: 'Button', themes: ALL, desc: 'native button (.btn on mac)', api: [
+  { id: 'button', name: 'Button', themes: ALL, desc: 'native button', api: [
     { tag: 'WinButton', props: 'text, href, to, target', slots: 'prepend, default, append', events: 'native' },
   ] },
   { id: 'dialog', name: 'Dialog', themes: ALL, desc: 'modal window (behavior)', api: [
@@ -129,25 +130,31 @@ export const COMPONENTS: ComponentMeta[] = [
   { id: 'dropdown', name: 'Dropdown', themes: ALL, desc: 'native select, keeps option value types', api: [
     { tag: 'WinDropdown', props: 'v-model, options, item-value, item-title, placeholder', slots: 'placeholder, options' },
   ] },
-  { id: 'listbox', name: 'Listbox', themes: ['win7'], desc: 'ul[role=listbox] single selection — 7.css only (X.css port TODO)', api: [
+  { id: 'listbox', name: 'Listbox', themes: ALL, desc: 'ul[role=listbox] single selection', api: [
     { tag: 'WinListbox', props: 'v-model, options, item-value, item-text' },
   ] },
-  { id: 'slider', name: 'Slider', themes: WINDOWS, desc: 'native range input — no Mac stylesheet styles it', api: [
+  { id: 'table', name: 'Table', themes: ALL, desc: 'listview <table> with .is-striped / .has-hover / .is-full / .is-center', api: [
+    { tag: 'WinTable', props: 'headers ({ key, title, center? }[]), items, item-key, striped, hover, full, shadow', slots: 'cell-<key> ({ item, value })' },
+  ] },
+  { id: 'slider', name: 'Slider', themes: ALL, desc: 'native range input', api: [
     { tag: 'WinSlider', props: 'v-model, native min / max / step', events: 'native' },
   ] },
-  { id: 'progress', name: 'Progress', themes: ['win7'], desc: 'determinate & indeterminate bar — 7.css only (TODO: 98.css .progress-indicator, XP.css native <progress>)', api: [
+  { id: 'progress', name: 'Progress', themes: ALL, desc: 'determinate & indeterminate bar', api: [
     { tag: 'WinProgress', props: "progress (0–100 or '40%'), indeterminate, animate, variant ('error', 'paused'), transition" },
   ] },
-  { id: 'searchbox', name: 'Searchbox', themes: ['win7'], desc: '.searchbox — 7.css only', api: [
+  { id: 'circular-progress', name: 'CircularProgress', themes: ALL, desc: '.spinner (.animate)', api: [
+    { tag: 'WinCircularProgress', props: 'animate (default true), label' },
+  ] },
+  { id: 'searchbox', name: 'Searchbox', themes: ALL, desc: '.searchbox with a search button', api: [
     { tag: 'WinSearchbox', props: 'v-model, placeholder, instant', events: 'search' },
   ] },
-  { id: 'tabs', name: 'Tabs', themes: ['winxp', 'win7'], desc: 'role="tablist" tabs — 98.css expects li[role=tab] > a, not button[role=tab]', api: [
+  { id: 'tabs', name: 'Tabs', themes: ALL, desc: 'role="tablist" tabs', api: [
     { tag: 'WinTabs', props: 'v-model (active key), tabs ({ key: title }), justified', slots: 'one per tab key' },
   ] },
-  { id: 'collapse', name: 'Collapse', themes: ['win7'], desc: '<details> disclosure — 7.css only (98/XP style it only inside .tree-view)', api: [
+  { id: 'collapse', name: 'Collapse', themes: ALL, desc: '<details> disclosure', api: [
     { tag: 'WinCollapse', props: 'v-model:open, title, prepend-icon, children (nested tree)', slots: 'title, default' },
   ] },
-  { id: 'groupbox', name: 'Groupbox', themes: WINDOWS, desc: 'fieldset + legend — no Mac stylesheet styles it', api: [
+  { id: 'groupbox', name: 'Groupbox', themes: ALL, desc: 'fieldset + legend', api: [
     { tag: 'WinGroupbox', props: 'title', slots: 'default' },
   ] },
   { id: 'link', name: 'Link', themes: ALL, desc: 'anchor / RouterLink / button link', api: [
@@ -156,20 +163,20 @@ export const COMPONENTS: ComponentMeta[] = [
   { id: 'icon', name: 'Icon', themes: ALL, desc: 'inline SVG icon (name or raw path)', api: [
     { tag: 'WinIcon', props: 'icon (built-in name or raw 24×24 path), size' },
   ] },
-  { id: 'balloon', name: 'Balloon', themes: ['win7'], desc: 'glass tooltip — 7.css only', api: [
+  { id: 'balloon', name: 'Balloon', themes: ALL, desc: 'tooltip balloon', api: [
     { tag: 'WinBalloon', props: 'caption, top, bottom, left, right', slots: 'default' },
   ] },
-  { id: 'menu', name: 'Menu & MenuBar', themes: ['win7', 'macos', 'osx'], desc: 'can-hover menus / .menu-items', api: [
+  { id: 'menu', name: 'Menu & MenuBar', themes: ALL, desc: 'menubar and can-hover menus', api: [
     { tag: 'WinMenuBar', props: 'can-hover', slots: 'default' },
     { tag: 'WinMenu', props: 'can-hover', slots: 'default' },
     { tag: 'WinMenuItem', props: "option ({ as: 'checkbox' | 'radio', id, name? }), value, v-model", slots: 'default, submenu' },
   ] },
-  { id: 'treeview', name: 'Treeview', themes: WINDOWS, desc: 'ul.tree-view with <details>', api: [
+  { id: 'treeview', name: 'Treeview', themes: ALL, desc: 'ul.tree-view with <details>', api: [
     { tag: 'WinTreeview', props: '', slots: 'default (<li> / <details> items)' },
   ] },
-  { id: 'taskbar', name: 'TaskBar & Start menu', themes: [], desc: '🚧 work in progress: markup contract, styles in progress in the vstyler96 forks', api: [
+  { id: 'taskbar', name: 'TaskBar & Start menu', themes: [], desc: '🚧 markup contract; the forks style the taskbar row and start button, the rest is in progress', api: [
     { tag: 'WinTaskBar', props: 'clock, show-desktop', slots: 'start, default (app buttons), tray', events: 'show-desktop' },
-    { tag: 'WinStartButton', props: 'v-model:open (shared with StartMenu), label', slots: 'default' },
+    { tag: 'WinStartButton', props: "v-model:open (shared with StartMenu), label, variant ('vista' on 7.css → .is-vista)", slots: 'default' },
     { tag: 'WinStartMenu', props: 'v-model:open · closes on Escape / outside click', slots: 'items, starred-items, picture, main-action, actions-dropdown, actions-dropdown-items', events: 'main-action' },
     { tag: 'WinStartMenuItem', props: 'text, icon, image, href, to · closes the menu when chosen', slots: 'default, icon', events: 'click' },
     { tag: 'WinStartMenuStarredItem', props: 'same as StartMenuItem, for #starred-items', slots: 'default, icon', events: 'click' },
@@ -178,7 +185,4 @@ export const COMPONENTS: ComponentMeta[] = [
   ], markup: TASKBAR_MARKUP },
 ]
 
-/** Smooth-scroll to an in-page anchor. */
-export function scrollToAnchor(id: string) {
-  document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-}
+

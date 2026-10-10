@@ -14,48 +14,51 @@
 </script>
 
 <script setup lang="ts">
+  // Docs-shell code block (docs.css): a caption bar with a copy button over highlighted code.
   import { computed, ref } from 'vue'
-  import { Collapse } from 'win7-vue'
 
   defineOptions({ name: 'CodePreview' })
 
   const {
     code,
     language = 'vue',
-    title = 'Show Code',
-    open = false,
+    title = undefined,
   } = defineProps<{
     code: string
     language?: string
+    /** Caption; defaults to the language. */
     title?: string
-    /** Render expanded by default (used for docs/install snippets). */
-    open?: boolean
   }>()
-
-  const isOpen = ref(open)
 
   const highlightedCode = computed(() => {
     const trimmedCode = code.trim()
-
     try {
       return hljs.highlight(trimmedCode, { language }).value
     } catch {
-      return trimmedCode
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
+      return trimmedCode.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
     }
   })
+
+  const copied = ref(false)
+  async function copy() {
+    await navigator.clipboard.writeText(code.trim())
+    copied.value = true
+    setTimeout(() => { copied.value = false }, 1500)
+  }
 </script>
 
 <template>
-  <div style="display: block; padding: 1em;">
-    <!-- eslint-disable -->
-    <Collapse
-      v-model:open="isOpen"
-      :title
-    ><pre><code :class="`hljs language-${language}`" v-html="highlightedCode" /></pre></Collapse>
-    <!-- eslint-enable -->
-  </div>
+  <figure class="docs-code">
+    <figcaption class="docs-code-head">
+      <span>{{ title ?? language }}</span>
+      <button
+        class="docs-btn"
+        @click="copy"
+      >
+        {{ copied ? 'Copied!' : 'Copy' }}
+      </button>
+    </figcaption>
+    <!-- eslint-disable-next-line vue/no-v-html -- highlight.js output of our own sources -->
+    <pre><code :class="`hljs language-${language}`" v-html="highlightedCode" /></pre>
+  </figure>
 </template>
-
